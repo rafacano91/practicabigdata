@@ -131,15 +131,35 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
+					"query": "select top (10)  * FROM prueba2\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "Database1",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 2')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
 					"query": "",
 					"metadata": {
 						"language": "sql"
 					},
 					"currentConnection": {
-						"databaseName": "practicabigdatasqlbase",
+						"databaseName": "Database1",
 						"poolName": "Built-in"
 					},
-					"resultLimit": 5000
+					"resultLimit": -1
 				},
 				"type": "SqlQuery"
 			},
@@ -167,7 +187,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "08c8414c-416b-4a95-92b8-e5958649d405"
+						"spark.autotune.trackingId": "1265f817-d14c-4aff-badb-a6afd69e7807"
 					}
 				},
 				"metadata": {
@@ -178,7 +198,7 @@
 						"display_name": "Synapse PySpark"
 					},
 					"language_info": {
-						"name": "python"
+						"name": "sql"
 					},
 					"a365ComputeOptions": {
 						"id": "/subscriptions/f98c40cb-c627-4c43-9ac4-d10bb7b42e04/resourceGroups/RG_MASTER_OCT22_GROUP11/providers/Microsoft.Synapse/workspaces/synapsegrupo11/bigDataPools/spark11",
@@ -397,6 +417,34 @@
 							}
 						},
 						"source": [
+							"COPY INTO Database1.usuarios\r\n",
+							"FROM 'https://datalakegen2grupo11.blob.core.windows.net/datalakegen2grupo11/user/trusted-service-user/brutos/userid-profile.tsv' [,...n]\r\n",
+							"WITH  \r\n",
+							"(\r\n",
+							"[FILE_TYPE = {'CSV'} ]\r\n",
+							"[,FILE_FORMAT = EXTERNAL FILE FORMAT OBJECT ]    \r\n",
+							"[,CREDENTIAL =(IDENTITY='Shared Access Signature', SECRET='sp=r&st=2022-11-10T15:26:31Z&se=2022-11-10T23:26:31Z&spr=https&sv=2021-06-08&sr=b&sig=gR9D7JYUKWnDvZqxedrCI3b6ND9tyhV4XYK0uW6eIaE%3D') ]\r\n",
+							"[,FIRSTROW = 2]\r\n",
+							"[,DATEFORMAT = 'date_format']\r\n",
+							"[,ENCODING = {'UTF8'}]"
+						],
+						"outputs": [],
+						"execution_count": 4
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
 							""
 						],
 						"outputs": [],
@@ -441,6 +489,127 @@
 						"ActionType": "CREATE",
 						"OldEntity": null,
 						"NewEntity": {
+							"Name": "Prueba2",
+							"EntityType": "TABLE",
+							"Namespace": {
+								"DatabaseName": "Database1"
+							},
+							"Description": "",
+							"TableType": "EXTERNAL",
+							"Origin": {
+								"Type": "SPARK"
+							},
+							"StorageDescriptor": {
+								"Columns": [
+									{
+										"Name": "id",
+										"OriginDataTypeName": {
+											"TypeName": "string",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Length": 8000,
+											"Properties": {
+												"HIVE_TYPE_STRING": "string"
+											}
+										}
+									},
+									{
+										"Name": "gender",
+										"OriginDataTypeName": {
+											"TypeName": "string",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Length": 8000,
+											"Properties": {
+												"HIVE_TYPE_STRING": "string"
+											}
+										}
+									},
+									{
+										"Name": "age",
+										"OriginDataTypeName": {
+											"TypeName": "long",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Properties": {
+												"HIVE_TYPE_STRING": "long"
+											}
+										}
+									},
+									{
+										"Name": "country",
+										"OriginDataTypeName": {
+											"TypeName": "string",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Length": 8000,
+											"Properties": {
+												"HIVE_TYPE_STRING": "string"
+											}
+										}
+									},
+									{
+										"Name": "registered",
+										"OriginDataTypeName": {
+											"TypeName": "string",
+											"IsComplexType": false,
+											"IsNullable": true,
+											"Length": 8000,
+											"Properties": {
+												"HIVE_TYPE_STRING": "string"
+											}
+										}
+									}
+								],
+								"Format": {
+									"InputFormat": "org.apache.hadoop.mapred.SequenceFileInputFormat",
+									"OutputFormat": "org.apache.hadoop.hive.ql.io.HiveSequenceFileOutputFormat",
+									"FormatType": "csv",
+									"SerializeLib": "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe",
+									"Properties": {
+										"path": "abfss://datalakegen2grupo11@datalakegen2grupo11.dfs.core.windows.net/user/trusted-service-user/brutos/userid-profile.tsv",
+										"delimiter": "\t",
+										"firstRowAsHeader": "true",
+										"multiLine": "false",
+										"serialization.format": "1",
+										"FormatTypeSetToDatabaseDefault": false,
+										"header": "true"
+									}
+								},
+								"Source": {
+									"Provider": "ADLS",
+									"Location": "abfss://datalakegen2grupo11@datalakegen2grupo11.dfs.core.windows.net/user/trusted-service-user/brutos/userid-profile.tsv",
+									"Properties": {
+										"LinkedServiceName": "synapsegrupo11-WorkspaceDefaultStorage",
+										"LocationSetToDatabaseDefault": false
+									}
+								},
+								"Properties": {
+									"textinputformat.record.delimiter": "\t",
+									"compression": "{\"type\":\"None\",\"level\":\"optimal\"}",
+									"derivedModelAttributeInfo": "{\"attributeReferences\":{}}"
+								},
+								"Compressed": false,
+								"IsStoredAsSubdirectories": false
+							},
+							"Properties": {
+								"Description": "",
+								"DisplayFolderInfo": "{\"name\":\"Others\",\"colorCode\":\"\"}",
+								"PrimaryKeys": "",
+								"spark.sql.sources.provider": "csv"
+							},
+							"Retention": 0,
+							"Temporary": false,
+							"IsRewriteEnabled": false
+						},
+						"Source": {
+							"Type": "SPARK"
+						}
+					},
+					{
+						"ActionType": "CREATE",
+						"OldEntity": null,
+						"NewEntity": {
 							"Name": "Usuarios",
 							"EntityType": "TABLE",
 							"Namespace": {
@@ -463,8 +632,7 @@
 											"Properties": {
 												"HIVE_TYPE_STRING": "string"
 											}
-										},
-										"DeltaFormatInvalidMessages": []
+										}
 									},
 									{
 										"Name": "gender",
@@ -476,8 +644,7 @@
 											"Properties": {
 												"HIVE_TYPE_STRING": "string"
 											}
-										},
-										"DeltaFormatInvalidMessages": []
+										}
 									},
 									{
 										"Name": "age",
@@ -488,8 +655,7 @@
 											"Properties": {
 												"HIVE_TYPE_STRING": "long"
 											}
-										},
-										"DeltaFormatInvalidMessages": []
+										}
 									},
 									{
 										"Name": "country",
@@ -501,8 +667,7 @@
 											"Properties": {
 												"HIVE_TYPE_STRING": "string"
 											}
-										},
-										"DeltaFormatInvalidMessages": []
+										}
 									},
 									{
 										"Name": "registered",
@@ -514,8 +679,7 @@
 											"Properties": {
 												"HIVE_TYPE_STRING": "string"
 											}
-										},
-										"DeltaFormatInvalidMessages": []
+										}
 									}
 								],
 								"Format": {
@@ -526,8 +690,8 @@
 									"Properties": {
 										"path": "abfss://datalakegen2grupo11@datalakegen2grupo11.dfs.core.windows.net/user/trusted-service-user/brutos/userid-profile.tsv",
 										"delimiter": "\t",
-										"multiLine": "false",
 										"firstRowAsHeader": "true",
+										"multiLine": "false",
 										"serialization.format": "1",
 										"FormatTypeSetToDatabaseDefault": false,
 										"header": "true"
