@@ -103,7 +103,7 @@
 			},
 			"Properties": {
 				"textinputformat.record.delimiter": "\t",
-				"compression": "",
+				"compression": "{\"type\":\"None\",\"level\":\"optimal\"}",
 				"derivedModelAttributeInfo": "{\"attributeReferences\":{}}"
 			},
 			"Compressed": false,
