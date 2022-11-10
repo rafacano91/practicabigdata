@@ -18,14 +18,11 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "d5b30514-da2d-43ed-a877-2c5938f2ca8b"
+				"spark.autotune.trackingId": "90ee2ed5-961b-4aab-ac09-5c6017e70043"
 			}
 		},
 		"metadata": {
 			"saveOutput": true,
-			"synapse_widget": {
-				"version": "0.1"
-			},
 			"enableDebugMode": false,
 			"kernelspec": {
 				"name": "synapse_pyspark",
@@ -41,13 +38,13 @@
 				"endpoint": "https://synapsegrupo11.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/spark11",
 				"auth": {
 					"type": "AAD",
-					"authResource": "https://dev.azuresynapse.net",
-					"authHeader": null
+					"authResource": "https://dev.azuresynapse.net"
 				},
 				"sparkVersion": "3.2",
 				"nodeCount": 10,
 				"cores": 4,
-				"memory": 28
+				"memory": 28,
+				"automaticScaleJobs": false
 			},
 			"sessionKeepAliveTimeout": 30
 		},
@@ -95,67 +92,6 @@
 					""
 				],
 				"execution_count": 16
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"spark.read.format(\"csv\").load(\"abfss://datalakegen2grupo11@r.cano.dfs.core.windows.net/userid-profile.tsv\").collect()\r\n",
-					""
-				],
-				"execution_count": 7
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"mssparkutils.fs.ls('datalakegen2grupo11@r.cano.dfs.core.windows.net/')"
-				],
-				"execution_count": 8
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					},
-					"microsoft": {
-						"language": "python"
-					}
-				},
-				"source": [
-					"%%pyspark\r\n",
-					"\r\n",
-					"df = spark.read.load('abfss://datalakegen2grupo11@r.cano.dfs.core.windows.net/datalakegen2grupo11/userid-profile.csv', format='csv')\r\n",
-					"display(df.limit(10))"
-				],
-				"execution_count": 14
 			},
 			{
 				"cell_type": "code",
@@ -244,7 +180,8 @@
 				},
 				"source": [
 					""
-				]
+				],
+				"execution_count": null
 			}
 		]
 	}
