@@ -1,0 +1,7 @@
+{
+	"name": "synapse-ws-custstgacct--synapsegrupo11-datalakegen2grupo11",
+	"properties": {
+		"privateLinkResourceId": "/subscriptions/f98c40cb-c627-4c43-9ac4-d10bb7b42e04/resourceGroups/RG_MASTER_OCT22_GROUP11/providers/Microsoft.Storage/storageAccounts/datalakegen2grupo11",
+		"groupId": "dfs"
+	}
+}

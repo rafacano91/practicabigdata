@@ -1,0 +1,10 @@
+{
+	"name": "synapse-ws-sql--synapsegrupo11",
+	"properties": {
+		"privateLinkResourceId": "/subscriptions/f98c40cb-c627-4c43-9ac4-d10bb7b42e04/resourceGroups/RG_MASTER_OCT22_GROUP11/providers/Microsoft.Synapse/workspaces/synapsegrupo11",
+		"groupId": "sql",
+		"fqdns": [
+			"synapsegrupo11.96d7135e-c42b-4552-9a61-a67f7902c7f7.sql.azuresynapse.net"
+		]
+	}
+}
