@@ -18,7 +18,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "efcbe238-9736-47a3-b37a-c072f2f230b8"
+				"spark.autotune.trackingId": "1265f817-d14c-4aff-badb-a6afd69e7807"
 			}
 		},
 		"metadata": {
@@ -29,7 +29,7 @@
 				"display_name": "Synapse PySpark"
 			},
 			"language_info": {
-				"name": "python"
+				"name": "sql"
 			},
 			"a365ComputeOptions": {
 				"id": "/subscriptions/f98c40cb-c627-4c43-9ac4-d10bb7b42e04/resourceGroups/RG_MASTER_OCT22_GROUP11/providers/Microsoft.Synapse/workspaces/synapsegrupo11/bigDataPools/spark11",
@@ -246,19 +246,28 @@
 					"(\r\n",
 					"[FILE_TYPE = {'CSV'} ]\r\n",
 					"[,FILE_FORMAT = EXTERNAL FILE FORMAT OBJECT ]    \r\n",
-					"[,CREDENTIAL = (AZURE CREDENTIAL) ]\r\n",
-					"[,ERRORFILE = '[http(s)://storageaccount/container]/errorfile_directory[/]]'\r\n",
-					"[,ERRORFILE_CREDENTIAL = (AZURE CREDENTIAL) ]\r\n",
-					"[,MAXERRORS = max_errors ]\r\n",
-					"[,COMPRESSION = { 'Gzip' | 'DefaultCodec'| 'Snappy'}]\r\n",
-					"[,FIELDQUOTE = 'string_delimiter']\r\n",
-					"[,FIELDTERMINATOR =  'field_terminator']  \r\n",
-					"[,ROWTERMINATOR = 'row_terminator']\r\n",
-					"[,FIRSTROW = first_row]\r\n",
+					"[,CREDENTIAL =(IDENTITY='Shared Access Signature', SECRET='sp=r&st=2022-11-10T15:26:31Z&se=2022-11-10T23:26:31Z&spr=https&sv=2021-06-08&sr=b&sig=gR9D7JYUKWnDvZqxedrCI3b6ND9tyhV4XYK0uW6eIaE%3D') ]\r\n",
+					"[,FIRSTROW = 2]\r\n",
 					"[,DATEFORMAT = 'date_format']\r\n",
-					"[,ENCODING = {'UTF8'|'UTF16'}]\r\n",
-					"[,IDENTITY_INSERT = {'ON' | 'OFF'}]\r\n",
-					"[,A"
+					"[,ENCODING = {'UTF8'}]"
+				],
+				"execution_count": 4
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					""
 				],
 				"execution_count": null
 			}

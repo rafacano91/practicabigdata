@@ -2,7 +2,7 @@
 	"name": "SQL script 1",
 	"properties": {
 		"content": {
-			"query": "select top (10)  * FROM Prueba2",
+			"query": "select top (10)  * FROM prueba2\n",
 			"metadata": {
 				"language": "sql"
 			},
