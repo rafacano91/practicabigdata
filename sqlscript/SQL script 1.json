@@ -2,12 +2,12 @@
 	"name": "SQL script 1",
 	"properties": {
 		"content": {
-			"query": "select top (10)  * FROM prueba2\n",
+			"query": "COPY INTO [practicabigdatasqlbase].[dbo].[Usuarios]\nFROM 'https://datalakegen2grupo11.blob.core.windows.net/datalakegen2grupo11/user/trusted-service-user/brutos/userid-profile.tsv' \nWITH  \n(\nFILE_TYPE = 'CSV'      \n,CREDENTIAL =(IDENTITY='Shared Access Signature', SECRET='sp=r&st=2022-11-10T15:26:31Z&se=2022-11-10T23:26:31Z&spr=https&sv=2021-06-08&sr=b&sig=gR9D7JYUKWnDvZqxedrCI3b6ND9tyhV4XYK0uW6eIaE%3D') \n,FIRSTROW = 2\n,ENCODING = 'UTF8'\n,AUTO_CREATE_TABLE = 'ON')\n",
 			"metadata": {
 				"language": "sql"
 			},
 			"currentConnection": {
-				"databaseName": "Database1",
+				"databaseName": "practicabigdatasqlbase",
 				"poolName": "Built-in"
 			},
 			"resultLimit": 5000
