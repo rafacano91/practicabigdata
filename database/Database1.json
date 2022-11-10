@@ -1,0 +1,22 @@
+{
+	"name": "Database1",
+	"properties": {
+		"Name": "Database1",
+		"EntityType": "DATABASE",
+		"Origin": {
+			"Type": "SPARK"
+		},
+		"Properties": {
+			"IsSyMSCDMDatabase": true
+		},
+		"Source": {
+			"Provider": "ADLS",
+			"Location": "abfss://datalakegen2grupo11@datalakegen2grupo11.dfs.core.windows.net/Database1",
+			"Properties": {
+				"FormatType": "csv",
+				"LinkedServiceName": "synapsegrupo11-WorkspaceDefaultStorage"
+			}
+		}
+	},
+	"type": "DATABASE"
+}
