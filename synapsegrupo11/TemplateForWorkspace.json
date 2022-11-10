@@ -131,12 +131,12 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "select top (10)  * FROM prueba2\n",
+					"query": "COPY INTO [practicabigdatasqlbase].[dbo].[Usuarios]\nFROM 'https://datalakegen2grupo11.blob.core.windows.net/datalakegen2grupo11/user/trusted-service-user/brutos/userid-profile.tsv' \nWITH  \n(\nFILE_TYPE = 'CSV'      \n,CREDENTIAL =(IDENTITY='Shared Access Signature', SECRET='sp=r&st=2022-11-10T15:26:31Z&se=2022-11-10T23:26:31Z&spr=https&sv=2021-06-08&sr=b&sig=gR9D7JYUKWnDvZqxedrCI3b6ND9tyhV4XYK0uW6eIaE%3D') \n,FIRSTROW = 2\n,ENCODING = 'UTF8'\n,AUTO_CREATE_TABLE = 'ON')\n",
 					"metadata": {
 						"language": "sql"
 					},
 					"currentConnection": {
-						"databaseName": "Database1",
+						"databaseName": "practicabigdatasqlbase",
 						"poolName": "Built-in"
 					},
 					"resultLimit": 5000
@@ -187,7 +187,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "1265f817-d14c-4aff-badb-a6afd69e7807"
+						"spark.autotune.trackingId": "b15d3154-0d86-4550-8637-0cd23f9c6be9"
 					}
 				},
 				"metadata": {
@@ -429,7 +429,7 @@
 							"[,ENCODING = {'UTF8'}]"
 						],
 						"outputs": [],
-						"execution_count": 4
+						"execution_count": 5
 					},
 					{
 						"cell_type": "code",
@@ -480,127 +480,6 @@
 									"LinkedServiceName": "synapsegrupo11-WorkspaceDefaultStorage"
 								}
 							}
-						},
-						"Source": {
-							"Type": "SPARK"
-						}
-					},
-					{
-						"ActionType": "CREATE",
-						"OldEntity": null,
-						"NewEntity": {
-							"Name": "Prueba2",
-							"EntityType": "TABLE",
-							"Namespace": {
-								"DatabaseName": "Database1"
-							},
-							"Description": "",
-							"TableType": "EXTERNAL",
-							"Origin": {
-								"Type": "SPARK"
-							},
-							"StorageDescriptor": {
-								"Columns": [
-									{
-										"Name": "id",
-										"OriginDataTypeName": {
-											"TypeName": "string",
-											"IsComplexType": false,
-											"IsNullable": true,
-											"Length": 8000,
-											"Properties": {
-												"HIVE_TYPE_STRING": "string"
-											}
-										}
-									},
-									{
-										"Name": "gender",
-										"OriginDataTypeName": {
-											"TypeName": "string",
-											"IsComplexType": false,
-											"IsNullable": true,
-											"Length": 8000,
-											"Properties": {
-												"HIVE_TYPE_STRING": "string"
-											}
-										}
-									},
-									{
-										"Name": "age",
-										"OriginDataTypeName": {
-											"TypeName": "long",
-											"IsComplexType": false,
-											"IsNullable": true,
-											"Properties": {
-												"HIVE_TYPE_STRING": "long"
-											}
-										}
-									},
-									{
-										"Name": "country",
-										"OriginDataTypeName": {
-											"TypeName": "string",
-											"IsComplexType": false,
-											"IsNullable": true,
-											"Length": 8000,
-											"Properties": {
-												"HIVE_TYPE_STRING": "string"
-											}
-										}
-									},
-									{
-										"Name": "registered",
-										"OriginDataTypeName": {
-											"TypeName": "string",
-											"IsComplexType": false,
-											"IsNullable": true,
-											"Length": 8000,
-											"Properties": {
-												"HIVE_TYPE_STRING": "string"
-											}
-										}
-									}
-								],
-								"Format": {
-									"InputFormat": "org.apache.hadoop.mapred.SequenceFileInputFormat",
-									"OutputFormat": "org.apache.hadoop.hive.ql.io.HiveSequenceFileOutputFormat",
-									"FormatType": "csv",
-									"SerializeLib": "org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe",
-									"Properties": {
-										"path": "abfss://datalakegen2grupo11@datalakegen2grupo11.dfs.core.windows.net/user/trusted-service-user/brutos/userid-profile.tsv",
-										"delimiter": "\t",
-										"firstRowAsHeader": "true",
-										"multiLine": "false",
-										"serialization.format": "1",
-										"FormatTypeSetToDatabaseDefault": false,
-										"header": "true"
-									}
-								},
-								"Source": {
-									"Provider": "ADLS",
-									"Location": "abfss://datalakegen2grupo11@datalakegen2grupo11.dfs.core.windows.net/user/trusted-service-user/brutos/userid-profile.tsv",
-									"Properties": {
-										"LinkedServiceName": "synapsegrupo11-WorkspaceDefaultStorage",
-										"LocationSetToDatabaseDefault": false
-									}
-								},
-								"Properties": {
-									"textinputformat.record.delimiter": "\t",
-									"compression": "{\"type\":\"None\",\"level\":\"optimal\"}",
-									"derivedModelAttributeInfo": "{\"attributeReferences\":{}}"
-								},
-								"Compressed": false,
-								"IsStoredAsSubdirectories": false
-							},
-							"Properties": {
-								"Description": "",
-								"DisplayFolderInfo": "{\"name\":\"Others\",\"colorCode\":\"\"}",
-								"PrimaryKeys": "",
-								"spark.sql.sources.provider": "csv"
-							},
-							"Retention": 0,
-							"Temporary": false,
-							"IsRewriteEnabled": false
 						},
 						"Source": {
 							"Type": "SPARK"
@@ -819,6 +698,24 @@
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/managedVirtualNetworks/default')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 3')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "practicabigdatasqlbase",
+						"poolName": "Built-in"
+					}
+				}
+			},
+			"dependsOn": []
 		}
 	]
 }
