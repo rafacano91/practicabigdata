@@ -1,0 +1,18 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"value": "synapsegrupo11"
+		},
+		"AzureBlobStorage1_connectionString": {
+			"value": ""
+		},
+		"synapsegrupo11-WorkspaceDefaultSqlServer_connectionString": {
+			"value": ""
+		},
+		"synapsegrupo11-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"value": "https://datalakegen2grupo11.dfs.core.windows.net"
+		}
+	}
+}
