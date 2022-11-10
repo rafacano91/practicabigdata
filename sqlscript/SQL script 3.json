@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 3",
+	"properties": {
+		"content": {
+			"query": "USE Database1;\nGO\n\nCREATE VIEW Usuarios_vista AS\nSELECT * \nFROM OPENROWSET(\n        BULK 'brutos/userid-profile.tsv',\n        DATA_SOURCE = 'datalakegen2grupo11',\n        FORMAT = 'CSV', \n        FIELDTERMINATOR ='\\t', \n        ROWTERMINATOR = '\\n'\n    )\nWITH (\n    [id] VARCHAR (255) COLLATE Latin1_General_BIN2,\n    [gender] VARCHAR (255) COLLATE Latin1_General_BIN2,\n    [age] NUMERIC,\n    [country]  VARCHAR (255) COLLATE Latin1_General_BIN2,\n    [registered]  VARCHAR (255) COLLATE Latin1_General_BIN2\n) AS [r];",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "Database1",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

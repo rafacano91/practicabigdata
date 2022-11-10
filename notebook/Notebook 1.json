@@ -18,7 +18,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "b15d3154-0d86-4550-8637-0cd23f9c6be9"
+				"spark.autotune.trackingId": "8b6770a4-4764-4574-9c1e-7e8745706530"
 			}
 		},
 		"metadata": {
@@ -91,7 +91,7 @@
 					"\r\n",
 					""
 				],
-				"execution_count": 16
+				"execution_count": 49
 			},
 			{
 				"cell_type": "code",
@@ -237,39 +237,29 @@
 						"transient": {
 							"deleting": false
 						}
-					}
-				},
-				"source": [
-					"COPY INTO Database1.usuarios\r\n",
-					"FROM 'https://datalakegen2grupo11.blob.core.windows.net/datalakegen2grupo11/user/trusted-service-user/brutos/userid-profile.tsv' [,...n]\r\n",
-					"WITH  \r\n",
-					"(\r\n",
-					"[FILE_TYPE = {'CSV'} ]\r\n",
-					"[,FILE_FORMAT = EXTERNAL FILE FORMAT OBJECT ]    \r\n",
-					"[,CREDENTIAL =(IDENTITY='Shared Access Signature', SECRET='sp=r&st=2022-11-10T15:26:31Z&se=2022-11-10T23:26:31Z&spr=https&sv=2021-06-08&sr=b&sig=gR9D7JYUKWnDvZqxedrCI3b6ND9tyhV4XYK0uW6eIaE%3D') ]\r\n",
-					"[,FIRSTROW = 2]\r\n",
-					"[,DATEFORMAT = 'date_format']\r\n",
-					"[,ENCODING = {'UTF8'}]"
-				],
-				"execution_count": 5
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
 					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
+					"collapsed": false
 				},
 				"source": [
-					""
+					"\r\n",
+					"CREATE VIEW Usuarios_vista AS\r\n",
+					"SELECT * \r\n",
+					"FROM OPENROWSET(\r\n",
+					"        BULK 'brutos/userid-profile.tsv',\r\n",
+					"        DATA_SOURCE = 'datalakegen2grupo11',\r\n",
+					"        FORMAT = 'CSV', \r\n",
+					"        FIELDTERMINATOR ='\\t', \r\n",
+					"        ROWTERMINATOR = '\\n'\r\n",
+					"    )\r\n",
+					"WITH (\r\n",
+					"    [id] VARCHAR (255) COLLATE Latin1_General_BIN2,\r\n",
+					"    [gender] VARCHAR (255) COLLATE Latin1_General_BIN2,\r\n",
+					"    [age] NUMERIC,\r\n",
+					"    [country]  VARCHAR (255) COLLATE Latin1_General_BIN2,\r\n",
+					"    [registered]  VARCHAR (255) COLLATE Latin1_General_BIN2\r\n",
+					") AS [r];"
 				],
-				"execution_count": null
+				"execution_count": 53
 			}
 		]
 	}
