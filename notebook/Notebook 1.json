@@ -18,7 +18,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "08c8414c-416b-4a95-92b8-e5958649d405"
+				"spark.autotune.trackingId": "efcbe238-9736-47a3-b37a-c072f2f230b8"
 			}
 		},
 		"metadata": {
@@ -240,7 +240,25 @@
 					}
 				},
 				"source": [
-					""
+					"COPY INTO Database1.usuarios\r\n",
+					"FROM 'https://datalakegen2grupo11.blob.core.windows.net/datalakegen2grupo11/user/trusted-service-user/brutos/userid-profile.tsv' [,...n]\r\n",
+					"WITH  \r\n",
+					"(\r\n",
+					"[FILE_TYPE = {'CSV'} ]\r\n",
+					"[,FILE_FORMAT = EXTERNAL FILE FORMAT OBJECT ]    \r\n",
+					"[,CREDENTIAL = (AZURE CREDENTIAL) ]\r\n",
+					"[,ERRORFILE = '[http(s)://storageaccount/container]/errorfile_directory[/]]'\r\n",
+					"[,ERRORFILE_CREDENTIAL = (AZURE CREDENTIAL) ]\r\n",
+					"[,MAXERRORS = max_errors ]\r\n",
+					"[,COMPRESSION = { 'Gzip' | 'DefaultCodec'| 'Snappy'}]\r\n",
+					"[,FIELDQUOTE = 'string_delimiter']\r\n",
+					"[,FIELDTERMINATOR =  'field_terminator']  \r\n",
+					"[,ROWTERMINATOR = 'row_terminator']\r\n",
+					"[,FIRSTROW = first_row]\r\n",
+					"[,DATEFORMAT = 'date_format']\r\n",
+					"[,ENCODING = {'UTF8'|'UTF16'}]\r\n",
+					"[,IDENTITY_INSERT = {'ON' | 'OFF'}]\r\n",
+					"[,A"
 				],
 				"execution_count": null
 			}

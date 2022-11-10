@@ -2,12 +2,12 @@
 	"name": "SQL script 1",
 	"properties": {
 		"content": {
-			"query": "",
+			"query": "select top (10)  * FROM Prueba2",
 			"metadata": {
 				"language": "sql"
 			},
 			"currentConnection": {
-				"databaseName": "practicabigdatasqlbase",
+				"databaseName": "Database1",
 				"poolName": "Built-in"
 			},
 			"resultLimit": 5000
