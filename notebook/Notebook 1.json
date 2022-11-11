@@ -18,7 +18,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "f7208f51-1b9d-4318-b1c5-37558f2b118c"
+				"spark.autotune.trackingId": "fa9608df-29f1-4f78-a234-17065445b19a"
 			}
 		},
 		"metadata": {
@@ -295,21 +295,19 @@
 					}
 				},
 				"source": [
+					"//scala\r\n",
+					"%%spark\r\n",
+					"//lectura de archivo tsv\r\n",
 					"val df = spark.read.option(\"delimiter\",\"\\t\").option(\"header\",\"true\").csv(\"brutos/userid-profile.tsv\")\r\n",
 					"//df.show\r\n",
-					"//val specificColumnsDf = df.select(\"id\", \"gender\", \"age\", \"country\", \"registered\") \r\n",
-					"//specificColumnsDf.show()\r\n",
+					"val specificColumnsDf = df.select(\"id\", \"gender\", \"age\", \"country\", \"registered\") \r\n",
+					"specificColumnsDf.show()\r\n",
 					"\r\n",
-					"spark.conf.set(\r\n",
-					"    \"spark.sql.parquet.writeLegacyFormat\",\r\n",
-					"    \"true\")\r\n",
-					"\r\n",
-					"//df.write.format(\"com.databricks.spark.sqldw\").option(\"url\", sqlDwUrlSmall).option(\"dbtable\", \"SampleTable\").option( \"forward_spark_azure_storage_credentials\",\"True\").option(\"tempdir\", tempDir).mode(\"overwrite\").save()\r\n",
 					"\r\n",
 					"\r\n",
 					""
 				],
-				"execution_count": 19
+				"execution_count": 28
 			},
 			{
 				"cell_type": "code",
@@ -322,9 +320,13 @@
 						"transient": {
 							"deleting": false
 						}
+					},
+					"microsoft": {
+						"language": "python"
 					}
 				},
 				"source": [
+					"%%pyspark\r\n",
 					"servername = \"jdbc:sqlserver://practicabigdata.database.windows.net:1433\"\r\n",
 					"dbname = \"Practica\"\r\n",
 					"url = servername + \";\" + \"databaseName=\" + dbname + \";\"\r\n",
@@ -347,7 +349,7 @@
 					"\r\n",
 					"print(\"MSSQL Connector write(overwrite) succeeded  \")"
 				],
-				"execution_count": 23
+				"execution_count": 29
 			}
 		]
 	}
