@@ -467,7 +467,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "3c74048a-a5fb-42a9-a5e4-58c8ec1f9442"
+						"spark.autotune.trackingId": "ce2f0db5-9135-4cd6-a888-a200df82e039"
 					}
 				},
 				"metadata": {
@@ -756,22 +756,20 @@
 							}
 						},
 						"source": [
+							"//scala\r\n",
+							"%%spark\r\n",
+							"//lectura de archivo tsv\r\n",
 							"val df = spark.read.option(\"delimiter\",\"\\t\").option(\"header\",\"true\").csv(\"brutos/userid-profile.tsv\")\r\n",
 							"//df.show\r\n",
-							"//val specificColumnsDf = df.select(\"id\", \"gender\", \"age\", \"country\", \"registered\") \r\n",
-							"//specificColumnsDf.show()\r\n",
+							"val specificColumnsDf = df.select(\"id\", \"gender\", \"age\", \"country\", \"registered\") \r\n",
+							"specificColumnsDf.show()\r\n",
 							"\r\n",
-							"spark.conf.set(\r\n",
-							"    \"spark.sql.parquet.writeLegacyFormat\",\r\n",
-							"    \"true\")\r\n",
-							"\r\n",
-							"//df.write.format(\"com.databricks.spark.sqldw\").option(\"url\", sqlDwUrlSmall).option(\"dbtable\", \"SampleTable\").option( \"forward_spark_azure_storage_credentials\",\"True\").option(\"tempdir\", tempDir).mode(\"overwrite\").save()\r\n",
 							"\r\n",
 							"\r\n",
 							""
 						],
 						"outputs": [],
-						"execution_count": 19
+						"execution_count": 28
 					},
 					{
 						"cell_type": "code",
@@ -784,9 +782,13 @@
 								"transient": {
 									"deleting": false
 								}
+							},
+							"microsoft": {
+								"language": "python"
 							}
 						},
 						"source": [
+							"%%pyspark\r\n",
 							"servername = \"jdbc:sqlserver://practicabigdata.database.windows.net:1433\"\r\n",
 							"dbname = \"Practica\"\r\n",
 							"url = servername + \";\" + \"databaseName=\" + dbname + \";\"\r\n",
@@ -810,7 +812,7 @@
 							"print(\"MSSQL Connector write(overwrite) succeeded  \")"
 						],
 						"outputs": [],
-						"execution_count": 23
+						"execution_count": 29
 					}
 				]
 			},
