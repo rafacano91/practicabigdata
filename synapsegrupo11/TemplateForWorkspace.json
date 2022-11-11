@@ -450,7 +450,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "07bc6df2-08f5-4f38-9c9d-62fd13b9e703"
+						"spark.autotune.trackingId": "e6a31437-3518-4b31-bb0a-1fb94d9fe990"
 					}
 				},
 				"metadata": {
@@ -739,31 +739,14 @@
 							}
 						},
 						"source": [
-							"val df = spark.read.csv(\"brutos/userid-profile.tsv\")\r\n",
+							"val df = spark.read.option(\"delimiter\",\"\\t\").option(\"header\",\"true\").csv(\"brutos/userid-profile.tsv\")\r\n",
+							"//df.show\r\n",
 							"val specificColumnsDf = df.select(\"id\", \"gender\", \"age\", \"country\", \"registered\") \r\n",
-							"specificColumnsDf.show()"
-						],
-						"outputs": [],
-						"execution_count": 12
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
+							"//specificColumnsDf.show()\r\n",
 							""
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 19
 					}
 				]
 			},
