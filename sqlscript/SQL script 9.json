@@ -1,0 +1,17 @@
+{
+	"name": "SQL script 9",
+	"properties": {
+		"content": {
+			"query": "create external data source brutos\nwith ( location = 'https://datalakegen2grupo11.blob.core.windows.net/datalakegen2grupo11/user/trusted-service-user/brutos' );\n\nselect top 10 *\nfrom openrowset(\n        bulk 'userid-profile.tsv',\n        data_source = 'brutos',\n        format = 'csv',\n        parser_version ='2.0',\n        firstrow = 2\n    ) as rows",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "practicabigdatasqlbase",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}

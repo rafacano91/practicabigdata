@@ -2,7 +2,7 @@
 	"name": "SQL script 7",
 	"properties": {
 		"content": {
-			"query": "CREATE DATABASE SCOPED CREDENTIAL [sqlondemand]\nWITH IDENTITY='SHARED ACCESS SIGNATURE',  \nSECRET = 'sp=r&st=2022-11-10T15:26:31Z&se=2022-11-10T23:26:31Z&spr=https&sv=2021-06-08&sr=b&sig=gR9D7JYUKWnDvZqxedrCI3b6ND9tyhV4XYK0uW6eIaE%3D'\n\nCREATE EXTERNAL DATA SOURCE SqlOnDemandDemo WITH (\n    LOCATION = 'https://datalakegen2grupo11.blob.core.windows.net',\n    CREDENTIAL = sqlondemand\n);\nGO\nCREATE EXTERNAL DATA SOURCE datalakegen2grupo11\nWITH ( LOCATION = 'https://datalakegen2grupo11.blob.core.windows.net/datalakegen2grupo11')\nGO\nCREATE EXTERNAL DATA SOURCE DeltaLakeStorage\nWITH ( location = 'https://datalakegen2grupo11.blob.core.windows.net/datalakegen2grupo11/user/trusted-service-user/brutos' );",
+			"query": "CREATE EXTERNAL DATA SOURCE SqlOnDemandDemo WITH (\n    LOCATION = 'https://datalakegen2grupo11.blob.core.windows.net',\n    CREDENTIAL = sqlondemand\n);\nGO\nCREATE EXTERNAL DATA SOURCE datalakegen2grupo11\nWITH ( LOCATION = 'https://datalakegen2grupo11.blob.core.windows.net/datalakegen2grupo11')\nGO\nCREATE EXTERNAL DATA SOURCE DeltaLakeStorage\nWITH ( location = 'https://datalakegen2grupo11.blob.core.windows.net/datalakegen2grupo11/user/trusted-service-user/brutos' );",
 			"metadata": {
 				"language": "sql"
 			},

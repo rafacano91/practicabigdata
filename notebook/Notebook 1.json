@@ -18,7 +18,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "3044084a-f266-4521-b4f9-db399c46a2e1"
+				"spark.autotune.trackingId": "606ec9d5-6d3e-4e7b-a8e7-1b803bed2084"
 			}
 		},
 		"metadata": {
@@ -267,9 +267,19 @@
 					}
 				},
 				"source": [
-					""
+					"create external data source brutos\r\n",
+					"with ( location = 'https://datalakegen2grupo11.blob.core.windows.net/datalakegen2grupo11/user/trusted-service-user/brutos' );\r\n",
+					"\r\n",
+					"select top 10 *\r\n",
+					"from openrowset(\r\n",
+					"        bulk 'userid-profile.tsv',\r\n",
+					"        data_source = 'brutos',\r\n",
+					"        format = 'csv',\r\n",
+					"        parser_version ='2.0',\r\n",
+					"        firstrow = 2\r\n",
+					"    ) as rows"
 				],
-				"execution_count": null
+				"execution_count": 1
 			}
 		]
 	}
