@@ -18,18 +18,18 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "9065716c-e77e-47c2-a40a-7c0abf9d4a52"
+				"spark.autotune.trackingId": "378f575f-af4d-426c-ae36-1be95373718a"
 			}
 		},
 		"metadata": {
 			"saveOutput": true,
 			"enableDebugMode": false,
 			"kernelspec": {
-				"name": "synapse_pyspark",
-				"display_name": "Synapse PySpark"
+				"name": "synapse_spark",
+				"display_name": "Synapse Spark"
 			},
 			"language_info": {
-				"name": "sql"
+				"name": "scala"
 			},
 			"a365ComputeOptions": {
 				"id": "/subscriptions/f98c40cb-c627-4c43-9ac4-d10bb7b42e04/resourceGroups/RG_MASTER_OCT22_GROUP11/providers/Microsoft.Synapse/workspaces/synapsegrupo11/bigDataPools/spark11",
@@ -91,7 +91,7 @@
 					"\r\n",
 					""
 				],
-				"execution_count": 16
+				"execution_count": 4
 			},
 			{
 				"cell_type": "code",
@@ -152,7 +152,7 @@
 					"df = spark.read.load('abfss://datalakegen2grupo11@r.cano.dfs.core.windows.net/datalakegen2grupo11/userid-profile.csv', format='csv')\r\n",
 					"display(df.limit(10))"
 				],
-				"execution_count": 1
+				"execution_count": 14
 			},
 			{
 				"cell_type": "code",
@@ -224,7 +224,7 @@
 				"source": [
 					"mssparkutils.fs.head('brutos/userid-profile.tsv', 500)"
 				],
-				"execution_count": 42
+				"execution_count": 5
 			},
 			{
 				"cell_type": "code",
@@ -240,16 +240,16 @@
 					}
 				},
 				"source": [
-					"COPY INTO Database1.Usuarios\r\n",
-					"FROM 'https://datalakegen2grupo11.blob.core.windows.net/datalakegen2grupo11/user/trusted-service-user/brutos/userid-profile.tsv'\r\n",
+					"COPY INTO Database1.usuarios\r\n",
+					"FROM 'https://datalakegen2grupo11.blob.core.windows.net/datalakegen2grupo11/user/trusted-service-user/brutos/userid-profile.tsv' [,...n]\r\n",
 					"WITH  \r\n",
 					"(\r\n",
-					"FILE_TYPE = 'CSV' \r\n",
-					",FILE_FORMAT = EXTERNAL FILE FORMAT OBJECT  \r\n",
-					",CREDENTIAL =(IDENTITY='Shared Access Signature', SECRET='sp=r&st=2022-11-10T15:26:31Z&se=2022-11-10T23:26:31Z&spr=https&sv=2021-06-08&sr=b&sig=gR9D7JYUKWnDvZqxedrCI3b6ND9tyhV4XYK0uW6eIaE%3D')\r\n",
-					",FIRSTROW = 2\r\n",
-					",DATEFORMAT = 'date_format'\r\n",
-					",ENCODING = 'UTF8'"
+					"[FILE_TYPE = {'CSV'} ]\r\n",
+					"[,FILE_FORMAT = EXTERNAL FILE FORMAT OBJECT ]    \r\n",
+					"[,CREDENTIAL =(IDENTITY='Shared Access Signature', SECRET='sp=r&st=2022-11-10T15:26:31Z&se=2022-11-10T23:26:31Z&spr=https&sv=2021-06-08&sr=b&sig=gR9D7JYUKWnDvZqxedrCI3b6ND9tyhV4XYK0uW6eIaE%3D') ]\r\n",
+					"[,FIRSTROW = 2]\r\n",
+					"[,DATEFORMAT = 'date_format']\r\n",
+					"[,ENCODING = {'UTF8'}]"
 				],
 				"execution_count": 5
 			},
@@ -280,6 +280,44 @@
 					"    ) as rows"
 				],
 				"execution_count": 1
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"val df = spark.read.csv(\"brutos/userid-profile.tsv\")\r\n",
+					"val specificColumnsDf = df.select(\"id\", \"gender\", \"age\", \"country\", \"registered\") \r\n",
+					"specificColumnsDf.show()"
+				],
+				"execution_count": 12
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					""
+				],
+				"execution_count": null
 			}
 		]
 	}
