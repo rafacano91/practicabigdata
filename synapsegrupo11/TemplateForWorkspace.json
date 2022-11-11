@@ -151,7 +151,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "CREATE EXTERNAL FILE FORMAT TSV\n       WITH ( FORMAT_TYPE = DELIMITEDTEXT)\nGO\nCREATE EXTERNAL DATA SOURCE publicData\nWITH (    LOCATION   = 'https://datalakegen2grupo11.blob.core.windows.net/datalakegen2grupo11/user/trusted-service-user/brutos' )\nGO\n\nCREATE EXTERNAL TABLE dbo.userPublicData ( [id] VARCHAR (255) COLLATE Latin1_General_BIN2,\n\n    [gender] VARCHAR (255) COLLATE Latin1_General_BIN2,\n\n    [age] NUMERIC,\n\n    [country]  VARCHAR (255) COLLATE Latin1_General_BIN2,\n\n    [registered]  VARCHAR (255) COLLATE Latin1_General_BIN2 )\n\nWITH ( LOCATION = 'userid-profile.tsv',\n       DATA_SOURCE = [publicData],\n       FILE_FORMAT = [TSV] )\n\n    ",
+					"query": "/*CREATE EXTERNAL FILE FORMAT TSV\n       WITH (   FORMAT_TYPE = DELIMITEDTEXT,\n                FORMAT_OPTIONS (    FIELD_TERMINATOR = '\\t',\n                                    FIRST_ROW = 2  \n                                )\n            )\nGO\nCREATE EXTERNAL DATA SOURCE publicData\nWITH (    LOCATION   = 'https://datalakegen2grupo11.blob.core.windows.net/datalakegen2grupo11/user/trusted-service-user/brutos' )\nGO\n*/\n\nCREATE EXTERNAL TABLE dbo.userPublicData ( [id] VARCHAR (255) COLLATE Latin1_General_BIN2,\n\n    [gender] VARCHAR (255) COLLATE Latin1_General_BIN2,\n\n    [age] NUMERIC,\n\n    [country]  VARCHAR (255) COLLATE Latin1_General_BIN2,\n\n    [registered]  VARCHAR (255) COLLATE Latin1_General_BIN2 )\n\nWITH ( LOCATION = 'userid-profile.tsv',\n       DATA_SOURCE = [publicData],\n       FILE_FORMAT = [TSV] )\n\n    ",
 					"metadata": {
 						"language": "sql"
 					},
@@ -191,7 +191,7 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "drop table [dbo].[userPublicData];",
+					"query": "--drop EXTERNAL table [dbo].[userPublicData];\n--drop EXTERNAL FILE FORMAT TSV;\n\nCREATE EXTERNAL TABLE dbo.userPublicData ( [id] VARCHAR (255) COLLATE Latin1_General_BIN2,\n\n    [gender] VARCHAR (255) COLLATE Latin1_General_BIN2,\n\n    [age] NUMERIC,\n\n    [country]  VARCHAR (255) COLLATE Latin1_General_BIN2,\n\n    [registered]  VARCHAR (255) COLLATE Latin1_General_BIN2 )\n\nWITH ( LOCATION = 'userid-profile.tsv',\n       DATA_SOURCE = [publicData],\n       FILE_FORMAT = [TSV] )",
 					"metadata": {
 						"language": "sql"
 					},
@@ -387,7 +387,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "606ec9d5-6d3e-4e7b-a8e7-1b803bed2084"
+						"spark.autotune.trackingId": "e52e4d49-c1da-4d49-8913-400a7bd3b9af"
 					}
 				},
 				"metadata": {
