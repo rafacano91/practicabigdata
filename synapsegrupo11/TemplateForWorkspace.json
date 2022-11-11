@@ -191,7 +191,47 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "--drop EXTERNAL table [dbo].[userPublicData];\n--drop EXTERNAL FILE FORMAT TSV;\n\nCREATE EXTERNAL TABLE dbo.canciones_usuarios ( \n    \n    [id] VARCHAR (255) COLLATE Latin1_General_BIN2,\n\n    [gender] VARCHAR (255) COLLATE Latin1_General_BIN2,\n\n    [age] NUMERIC,\n\n    [country]  VARCHAR (255) COLLATE Latin1_General_BIN2,\n\n    [registered]  VARCHAR (255) COLLATE Latin1_General_BIN2 )\n\nWITH ( LOCATION = 'userid-profile.tsv',\n       DATA_SOURCE = [publicData],\n       FILE_FORMAT = [TSV2GB] )",
+					"query": "--drop EXTERNAL table [dbo].[userPublicData];\n--drop EXTERNAL FILE FORMAT TSV;\n\nCREATE EXTERNAL TABLE dbo.canciones_usuarios ( \n    \n    [ID] VARCHAR (255) ,\n\n    [UsuarioID] VARCHAR (255) ,\n\n    [FechaReproduccion] NUMERIC,\n\n    [ArtistaID]  VARCHAR (255),\n\n    [ArtistaNombre]  VARCHAR (255),\n\n    [CancionID]  VARCHAR (255),\n\n    [CancionNombre]  VARCHAR (255) )\n\nWITH ( LOCATION = 'userid-timestamp-artid-artname-traid-traname.tsv',\n       DATA_SOURCE = [publicData],\n       FILE_FORMAT = [TSV2GB] )",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "practicabigdatasqlbase",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 13')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SELECT TOP (100) [ID]\n,[UsuarioID]\n,[FechaReproduccion]\n,[ArtistaID]\n,[ArtistaNombre]\n,[CancionID]\n,[CancionNombre]\n FROM [dbo].[canciones_usuarios]",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "practicabigdatasqlbase",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 14')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SELECT TOP (100) [id]\n,[gender]\n,[age]\n,[country]\n,[registered]\n FROM [dbo].[userid_profile]",
 					"metadata": {
 						"language": "sql"
 					},
