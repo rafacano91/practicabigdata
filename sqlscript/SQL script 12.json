@@ -2,7 +2,7 @@
 	"name": "SQL script 12",
 	"properties": {
 		"content": {
-			"query": "--drop EXTERNAL table [dbo].[userPublicData];\n--drop EXTERNAL FILE FORMAT TSV;\n\nCREATE EXTERNAL TABLE dbo.userPublicData ( [id] VARCHAR (255) COLLATE Latin1_General_BIN2,\n\n    [gender] VARCHAR (255) COLLATE Latin1_General_BIN2,\n\n    [age] NUMERIC,\n\n    [country]  VARCHAR (255) COLLATE Latin1_General_BIN2,\n\n    [registered]  VARCHAR (255) COLLATE Latin1_General_BIN2 )\n\nWITH ( LOCATION = 'userid-profile.tsv',\n       DATA_SOURCE = [publicData],\n       FILE_FORMAT = [TSV] )",
+			"query": "--drop EXTERNAL table [dbo].[userPublicData];\n--drop EXTERNAL FILE FORMAT TSV;\n\nCREATE EXTERNAL TABLE dbo.canciones_usuarios ( \n    \n    [id] VARCHAR (255) COLLATE Latin1_General_BIN2,\n\n    [gender] VARCHAR (255) COLLATE Latin1_General_BIN2,\n\n    [age] NUMERIC,\n\n    [country]  VARCHAR (255) COLLATE Latin1_General_BIN2,\n\n    [registered]  VARCHAR (255) COLLATE Latin1_General_BIN2 )\n\nWITH ( LOCATION = 'userid-profile.tsv',\n       DATA_SOURCE = [publicData],\n       FILE_FORMAT = [TSV2GB] )",
 			"metadata": {
 				"language": "sql"
 			},

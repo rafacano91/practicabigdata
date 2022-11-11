@@ -2,7 +2,7 @@
 	"name": "SQL script 11",
 	"properties": {
 		"content": {
-			"query": "SELECT TOP (100) [id]\n,[gender]\n,[age]\n,[country]\n,[registered]\n FROM [dbo].[userPublicData]",
+			"query": "SELECT TOP (100) [id]\n,[gender]\n,[age]\n,[country]\n,[registered]\n FROM [dbo].[userid_profile]",
 			"metadata": {
 				"language": "sql"
 			},
