@@ -2,7 +2,7 @@
 	"name": "SQL script 13",
 	"properties": {
 		"content": {
-			"query": "SELECT TOP (100) [ID]\n,[UsuarioID]\n,[FechaReproduccion]\n,[ArtistaID]\n,[ArtistaNombre]\n,[CancionID]\n,[CancionNombre]\n FROM [dbo].[canciones_usuarios]",
+			"query": "SELECT TOP (10000000) \n--[ID]\n[UsuarioID]\n,[FechaReproduccion]\n,[ArtistaID]\n,[ArtistaNombre]\n,[CancionID]\n,[CancionNombre]\n FROM [dbo].[canciones_usuarios]",
 			"metadata": {
 				"language": "sql"
 			},
