@@ -14,6 +14,9 @@
 		"synapsegrupo11-WorkspaceDefaultSqlServer_connectionString": {
 			"value": ""
 		},
+		"AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"value": "https://practicabigdata.vault.azure.net/"
+		},
 		"synapsegrupo11-WorkspaceDefaultStorage_properties_typeProperties_url": {
 			"value": "https://datalakegen2grupo11.dfs.core.windows.net"
 		}
