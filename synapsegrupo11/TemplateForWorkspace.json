@@ -146,6 +146,66 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 10')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "CREATE EXTERNAL FILE FORMAT TSV\n       WITH ( FORMAT_TYPE = DELIMITEDTEXT)\nGO\nCREATE EXTERNAL DATA SOURCE publicData\nWITH (    LOCATION   = 'https://datalakegen2grupo11.blob.core.windows.net/datalakegen2grupo11/user/trusted-service-user/brutos' )\nGO\n\nCREATE EXTERNAL TABLE dbo.userPublicData ( [id] VARCHAR (255) COLLATE Latin1_General_BIN2,\n\n    [gender] VARCHAR (255) COLLATE Latin1_General_BIN2,\n\n    [age] NUMERIC,\n\n    [country]  VARCHAR (255) COLLATE Latin1_General_BIN2,\n\n    [registered]  VARCHAR (255) COLLATE Latin1_General_BIN2 )\n\nWITH ( LOCATION = 'userid-profile.tsv',\n       DATA_SOURCE = [publicData],\n       FILE_FORMAT = [TSV] )\n\n    ",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "practicabigdatasqlbase",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 11')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SELECT TOP (100) [id]\n,[gender]\n,[age]\n,[country]\n,[registered]\n FROM [dbo].[userPublicData]",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "practicabigdatasqlbase",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 12')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "drop table [dbo].[userPublicData];",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "practicabigdatasqlbase",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/SQL script 2')]",
 			"type": "Microsoft.Synapse/workspaces/sqlscripts",
 			"apiVersion": "2019-06-01-preview",
@@ -251,7 +311,47 @@
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"content": {
-					"query": "CREATE DATABASE SCOPED CREDENTIAL [sqlondemand]\nWITH IDENTITY='SHARED ACCESS SIGNATURE',  \nSECRET = 'sp=r&st=2022-11-10T15:26:31Z&se=2022-11-10T23:26:31Z&spr=https&sv=2021-06-08&sr=b&sig=gR9D7JYUKWnDvZqxedrCI3b6ND9tyhV4XYK0uW6eIaE%3D'\n\nCREATE EXTERNAL DATA SOURCE SqlOnDemandDemo WITH (\n    LOCATION = 'https://datalakegen2grupo11.blob.core.windows.net',\n    CREDENTIAL = sqlondemand\n);\nGO\nCREATE EXTERNAL DATA SOURCE datalakegen2grupo11\nWITH ( LOCATION = 'https://datalakegen2grupo11.blob.core.windows.net/datalakegen2grupo11')\nGO\nCREATE EXTERNAL DATA SOURCE DeltaLakeStorage\nWITH ( location = 'https://datalakegen2grupo11.blob.core.windows.net/datalakegen2grupo11/user/trusted-service-user/brutos' );",
+					"query": "CREATE EXTERNAL DATA SOURCE SqlOnDemandDemo WITH (\n    LOCATION = 'https://datalakegen2grupo11.blob.core.windows.net',\n    CREDENTIAL = sqlondemand\n);\nGO\nCREATE EXTERNAL DATA SOURCE datalakegen2grupo11\nWITH ( LOCATION = 'https://datalakegen2grupo11.blob.core.windows.net/datalakegen2grupo11')\nGO\nCREATE EXTERNAL DATA SOURCE DeltaLakeStorage\nWITH ( location = 'https://datalakegen2grupo11.blob.core.windows.net/datalakegen2grupo11/user/trusted-service-user/brutos' );",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "practicabigdatasqlbase",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 8')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'https://datalakegen2grupo11.blob.core.windows.net/datalakegen2grupo11/user/trusted-service-user/brutos/userid-profile.tsv',\n        FORMAT='CSV',\n        firstrow = 2\n    ) AS rows;",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "master",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 9')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "create external data source brutos\nwith ( location = 'https://datalakegen2grupo11.blob.core.windows.net/datalakegen2grupo11/user/trusted-service-user/brutos' );\n\nselect top 10 *\nfrom openrowset(\n        bulk 'userid-profile.tsv',\n        data_source = 'brutos',\n        format = 'csv',\n        parser_version ='2.0',\n        firstrow = 2\n    ) as rows",
 					"metadata": {
 						"language": "sql"
 					},
@@ -287,7 +387,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "3044084a-f266-4521-b4f9-db399c46a2e1"
+						"spark.autotune.trackingId": "606ec9d5-6d3e-4e7b-a8e7-1b803bed2084"
 					}
 				},
 				"metadata": {
@@ -545,10 +645,20 @@
 							}
 						},
 						"source": [
-							""
+							"create external data source brutos\r\n",
+							"with ( location = 'https://datalakegen2grupo11.blob.core.windows.net/datalakegen2grupo11/user/trusted-service-user/brutos' );\r\n",
+							"\r\n",
+							"select top 10 *\r\n",
+							"from openrowset(\r\n",
+							"        bulk 'userid-profile.tsv',\r\n",
+							"        data_source = 'brutos',\r\n",
+							"        format = 'csv',\r\n",
+							"        parser_version ='2.0',\r\n",
+							"        firstrow = 2\r\n",
+							"    ) as rows"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 1
 					}
 				]
 			},
