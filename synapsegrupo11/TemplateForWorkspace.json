@@ -37,15 +37,6 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('workspaceName'), '/sqlDedicado')]",
-			"type": "Microsoft.Synapse/workspaces/sqlPools",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('workspaceName'), '/AzureBlobStorage1')]",
 			"type": "Microsoft.Synapse/workspaces/linkedServices",
 			"apiVersion": "2019-06-01-preview",
@@ -608,7 +599,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "c0ab1fd8-56e4-4bc5-a90e-20516e32cfab"
+						"spark.autotune.trackingId": "2a1c8a8b-8d4b-4426-af2c-c2a65af56beb"
 					}
 				},
 				"metadata": {
@@ -1180,15 +1171,16 @@
 							"        print (\" hasta : \"+hasta)\r\n",
 							"        print (\"\\n\")\r\n",
 							"\r\n",
-							"        if(desde <= registro <= hasta )\r\n",
-							"            \r\n",
 							"\r\n",
-							"\r\n",
+							"        if desde <= registro <= hasta:\r\n",
+							"            print(\"in between\")\r\n",
+							"        else:\r\n",
+							"            print(\"No!\")\r\n",
 							"\r\n",
 							""
 						],
 						"outputs": [],
-						"execution_count": 25
+						"execution_count": 96
 					}
 				]
 			},
