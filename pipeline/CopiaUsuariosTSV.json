@@ -38,11 +38,10 @@
 					},
 					"sink": {
 						"type": "SqlDWSink",
-						"writeBehavior": "Upsert",
+						"allowCopyCommand": true,
 						"tableOption": "autoCreate"
 					},
 					"enableStaging": false,
-					"validateDataConsistency": true,
 					"logSettings": {
 						"enableCopyActivityLog": true,
 						"copyActivityLogSettings": {
