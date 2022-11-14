@@ -18,7 +18,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "2ee91faf-facd-4c8a-9f31-bc35e8de5755"
+				"spark.autotune.trackingId": "ea57a85d-d134-4d0c-b89b-345d008652d0"
 			}
 		},
 		"metadata": {
@@ -54,7 +54,7 @@
 				"source": [
 					"spark.read.format(\"csv\").load(\"abfss://datalakegen2grupo11@f.campos.dfs.core.windows.net/userid-profile.tsv\").collect()"
 				],
-				"execution_count": 2
+				"execution_count": 5
 			},
 			{
 				"cell_type": "code",
@@ -91,7 +91,7 @@
 					"\r\n",
 					""
 				],
-				"execution_count": 4
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
@@ -110,7 +110,7 @@
 					"spark.read.format(\"csv\").load(\"abfss://datalakegen2grupo11@r.cano.dfs.core.windows.net/userid-profile.tsv\").collect()\r\n",
 					""
 				],
-				"execution_count": 7
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
@@ -128,7 +128,7 @@
 				"source": [
 					"mssparkutils.fs.ls('datalakegen2grupo11@r.cano.dfs.core.windows.net/')"
 				],
-				"execution_count": 8
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
@@ -152,7 +152,7 @@
 					"df = spark.read.load('abfss://datalakegen2grupo11@r.cano.dfs.core.windows.net/datalakegen2grupo11/userid-profile.csv', format='csv')\r\n",
 					"display(df.limit(10))"
 				],
-				"execution_count": 14
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
@@ -170,7 +170,7 @@
 				"source": [
 					"mssparkutils.fs.ls('hola')"
 				],
-				"execution_count": 19
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
@@ -188,7 +188,7 @@
 				"source": [
 					"mssparkutils.fs.ls('/')"
 				],
-				"execution_count": 30
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
@@ -206,7 +206,7 @@
 				"source": [
 					"mssparkutils.fs.mkdirs('hola')"
 				],
-				"execution_count": 18
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
@@ -224,7 +224,7 @@
 				"source": [
 					"mssparkutils.fs.head('brutos/userid-profile.tsv', 500)"
 				],
-				"execution_count": 5
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
@@ -251,7 +251,7 @@
 					"[,DATEFORMAT = 'date_format']\r\n",
 					"[,ENCODING = {'UTF8'}]"
 				],
-				"execution_count": 5
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
@@ -279,7 +279,7 @@
 					"        firstrow = 2\r\n",
 					"    ) as rows"
 				],
-				"execution_count": 1
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
@@ -307,7 +307,7 @@
 					"\r\n",
 					""
 				],
-				"execution_count": 28
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
@@ -349,7 +349,7 @@
 					"\r\n",
 					"print(\"MSSQL Connector write(overwrite) succeeded  \")"
 				],
-				"execution_count": 29
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
@@ -365,7 +365,10 @@
 					},
 					"microsoft": {
 						"language": "python"
-					}
+					},
+					"tags": [
+						"parameters"
+					]
 				},
 				"source": [
 					"%%pyspark\r\n",
@@ -395,7 +398,7 @@
 					"print(\"MSSQL Connector write(overwrite) succeeded  \")\r\n",
 					""
 				],
-				"execution_count": 21
+				"execution_count": 7
 			},
 			{
 				"cell_type": "code",
@@ -447,7 +450,7 @@
 					"print(\"MSSQL Connector write(overwrite) succeeded  \")\r\n",
 					""
 				],
-				"execution_count": 32
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
@@ -475,7 +478,7 @@
 					"\r\n",
 					"data(\"Desde\").between(\"2015-07-05\", \"2015-09-02\")"
 				],
-				"execution_count": 46
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
@@ -491,6 +494,15 @@
 					}
 				},
 				"source": [
+					"from pyspark.sql.types import StructType,StructField, StringType, IntegerType\r\n",
+					"servername = \"jdbc:sqlserver://practicabigdata.database.windows.net:1433\"\r\n",
+					"dbname = \"Practica\"\r\n",
+					"url = servername + \";\" + \"databaseName=\" + dbname + \";\"\r\n",
+					"dbtable = \"Usuarios\"\r\n",
+					"user = \"practicabigdata\" \r\n",
+					"password = \"BigData123\"\r\n",
+					"\r\n",
+					"\r\n",
 					"\"\"\"Creacion Tabla UsuariosHoroscopo\"\"\"\r\n",
 					"from pyspark.sql.functions import *\r\n",
 					"tablaUsuarios = spark.read \\\r\n",
@@ -523,16 +535,17 @@
 					"\r\n",
 					")\r\n",
 					"\"\"\"\r\n",
-					"tablaUsuarios = tablaUsuarios.collect()\r\n",
-					"tablaHoroscopos = tablaHoroscopos\r\n",
-					"\r\n",
+					"#tablaUsuarios = tablaUsuarios.collect() crea una lista\r\n",
+					"tablaUsuarios.show()\r\n",
+					"tablaHoroscopos.show()\r\n",
+					"\"\"\"\r\n",
 					"for x in tablaUsuarios:\r\n",
 					"    to_date(x[\"registro\"],\"\").show()\r\n",
 					"    for y in tablaHoroscopos:\r\n",
 					"        tablaUsuarios = tablaUsuarios.filter(to_date(data(x[\"registro\"]).between(y[\"Desde\"],y[\"Hasta\"])).show()  \"\"\"\r\n",
 					""
 				],
-				"execution_count": 68
+				"execution_count": 21
 			},
 			{
 				"cell_type": "code",
@@ -548,10 +561,25 @@
 					}
 				},
 				"source": [
-					"\"\"\"Creacion Tabla UsuariosHoroscopo\"\"\"\r\n",
+					"for users in tablaUsuarios.collect():\r\n",
+					"    registro = users[\"registro\"]\r\n",
+					"    print (\"Resgistro: \"+registro)\r\n",
+					"\r\n",
+					"    for horos in tablaHoroscopos.collect():\r\n",
+					"        desde = horos[\"Desde\"]\r\n",
+					"        hasta =  horos[\"Hasta\"]\r\n",
+					"        print (\" desde : \"+desde)\r\n",
+					"        print (\" hasta : \"+hasta)\r\n",
+					"        print (\"\\n\")\r\n",
+					"\r\n",
+					"        if(desde <= registro <= hasta )\r\n",
+					"            \r\n",
+					"\r\n",
+					"\r\n",
+					"\r\n",
 					""
 				],
-				"execution_count": null
+				"execution_count": 25
 			}
 		]
 	}
