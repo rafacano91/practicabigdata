@@ -37,6 +37,15 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('workspaceName'), '/sqlDedicado')]",
+			"type": "Microsoft.Synapse/workspaces/sqlPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/AzureBlobStorage1')]",
 			"type": "Microsoft.Synapse/workspaces/linkedServices",
 			"apiVersion": "2019-06-01-preview",
@@ -599,7 +608,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "58d20ecd-17b9-40df-8d4b-eed2ca8d61da"
+						"spark.autotune.trackingId": "c0ab1fd8-56e4-4bc5-a90e-20516e32cfab"
 					}
 				},
 				"metadata": {
@@ -637,7 +646,7 @@
 							"spark.read.format(\"csv\").load(\"abfss://datalakegen2grupo11@f.campos.dfs.core.windows.net/userid-profile.tsv\").collect()"
 						],
 						"outputs": [],
-						"execution_count": 2
+						"execution_count": 5
 					},
 					{
 						"cell_type": "code",
@@ -675,7 +684,7 @@
 							""
 						],
 						"outputs": [],
-						"execution_count": 4
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -695,7 +704,7 @@
 							""
 						],
 						"outputs": [],
-						"execution_count": 7
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -714,7 +723,7 @@
 							"mssparkutils.fs.ls('datalakegen2grupo11@r.cano.dfs.core.windows.net/')"
 						],
 						"outputs": [],
-						"execution_count": 8
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -739,7 +748,7 @@
 							"display(df.limit(10))"
 						],
 						"outputs": [],
-						"execution_count": 14
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -758,7 +767,7 @@
 							"mssparkutils.fs.ls('hola')"
 						],
 						"outputs": [],
-						"execution_count": 19
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -777,7 +786,7 @@
 							"mssparkutils.fs.ls('/')"
 						],
 						"outputs": [],
-						"execution_count": 30
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -796,7 +805,7 @@
 							"mssparkutils.fs.mkdirs('hola')"
 						],
 						"outputs": [],
-						"execution_count": 18
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -815,7 +824,7 @@
 							"mssparkutils.fs.head('brutos/userid-profile.tsv', 500)"
 						],
 						"outputs": [],
-						"execution_count": 5
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -843,7 +852,7 @@
 							"[,ENCODING = {'UTF8'}]"
 						],
 						"outputs": [],
-						"execution_count": 5
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -872,7 +881,7 @@
 							"    ) as rows"
 						],
 						"outputs": [],
-						"execution_count": 1
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -901,7 +910,7 @@
 							""
 						],
 						"outputs": [],
-						"execution_count": 28
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -944,7 +953,7 @@
 							"print(\"MSSQL Connector write(overwrite) succeeded  \")"
 						],
 						"outputs": [],
-						"execution_count": 29
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -960,7 +969,10 @@
 							},
 							"microsoft": {
 								"language": "python"
-							}
+							},
+							"tags": [
+								"parameters"
+							]
 						},
 						"source": [
 							"%%pyspark\r\n",
@@ -991,7 +1003,7 @@
 							""
 						],
 						"outputs": [],
-						"execution_count": 21
+						"execution_count": 7
 					},
 					{
 						"cell_type": "code",
@@ -1044,7 +1056,7 @@
 							""
 						],
 						"outputs": [],
-						"execution_count": 32
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -1073,7 +1085,7 @@
 							"data(\"Desde\").between(\"2015-07-05\", \"2015-09-02\")"
 						],
 						"outputs": [],
-						"execution_count": 46
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -1089,6 +1101,15 @@
 							}
 						},
 						"source": [
+							"from pyspark.sql.types import StructType,StructField, StringType, IntegerType\r\n",
+							"servername = \"jdbc:sqlserver://practicabigdata.database.windows.net:1433\"\r\n",
+							"dbname = \"Practica\"\r\n",
+							"url = servername + \";\" + \"databaseName=\" + dbname + \";\"\r\n",
+							"dbtable = \"Usuarios\"\r\n",
+							"user = \"practicabigdata\" \r\n",
+							"password = \"BigData123\"\r\n",
+							"\r\n",
+							"\r\n",
 							"\"\"\"Creacion Tabla UsuariosHoroscopo\"\"\"\r\n",
 							"from pyspark.sql.functions import *\r\n",
 							"tablaUsuarios = spark.read \\\r\n",
@@ -1121,9 +1142,10 @@
 							"\r\n",
 							")\r\n",
 							"\"\"\"\r\n",
-							"tablaUsuarios = tablaUsuarios.collect()\r\n",
-							"tablaHoroscopos = tablaHoroscopos\r\n",
-							"\r\n",
+							"#tablaUsuarios = tablaUsuarios.collect() crea una lista\r\n",
+							"tablaUsuarios.show()\r\n",
+							"tablaHoroscopos.show()\r\n",
+							"\"\"\"\r\n",
 							"for x in tablaUsuarios:\r\n",
 							"    to_date(x[\"registro\"],\"\").show()\r\n",
 							"    for y in tablaHoroscopos:\r\n",
@@ -1131,7 +1153,7 @@
 							""
 						],
 						"outputs": [],
-						"execution_count": 68
+						"execution_count": 21
 					},
 					{
 						"cell_type": "code",
@@ -1147,11 +1169,26 @@
 							}
 						},
 						"source": [
-							"\"\"\"Creacion Tabla UsuariosHoroscopo\"\"\"\r\n",
+							"for users in tablaUsuarios.collect():\r\n",
+							"    registro = users[\"registro\"]\r\n",
+							"    print (\"Resgistro: \"+registro)\r\n",
+							"\r\n",
+							"    for horos in tablaHoroscopos.collect():\r\n",
+							"        desde = horos[\"Desde\"]\r\n",
+							"        hasta =  horos[\"Hasta\"]\r\n",
+							"        print (\" desde : \"+desde)\r\n",
+							"        print (\" hasta : \"+hasta)\r\n",
+							"        print (\"\\n\")\r\n",
+							"\r\n",
+							"        if(desde <= registro <= hasta )\r\n",
+							"            \r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
 							""
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 25
 					}
 				]
 			},
@@ -1629,6 +1666,18 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/sqlDedicado')]",
+			"type": "Microsoft.Synapse/workspaces/sqlPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"collation": "SQL_Latin1_General_CP1_CI_AS",
+				"maxSizeBytes": 263882790666240,
+				"annotations": []
+			},
+			"dependsOn": [],
+			"location": "eastus"
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/spark11')]",
 			"type": "Microsoft.Synapse/workspaces/bigDataPools",
 			"apiVersion": "2019-06-01-preview",
@@ -1648,18 +1697,6 @@
 				"sparkVersion": "3.2",
 				"isComputeIsolationEnabled": false,
 				"sessionLevelPackagesEnabled": false,
-				"annotations": []
-			},
-			"dependsOn": [],
-			"location": "eastus"
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/sqlDedicado')]",
-			"type": "Microsoft.Synapse/workspaces/sqlPools",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"collation": "SQL_Latin1_General_CP1_CI_AS",
-				"maxSizeBytes": 263882790666240,
 				"annotations": []
 			},
 			"dependsOn": [],
