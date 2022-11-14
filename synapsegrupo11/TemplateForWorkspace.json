@@ -849,7 +849,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "b71b53d4-e9ac-4446-8999-dcc2c5f09376"
+						"spark.autotune.trackingId": "c48269d5-6c6c-4036-b0e4-567e08135929"
 					}
 				},
 				"metadata": {
@@ -887,7 +887,7 @@
 							"spark.read.format(\"csv\").load(\"abfss://datalakegen2grupo11@f.campos.dfs.core.windows.net/userid-profile.tsv\").collect()"
 						],
 						"outputs": [],
-						"execution_count": 5
+						"execution_count": 161
 					},
 					{
 						"cell_type": "code",
@@ -1244,7 +1244,7 @@
 							""
 						],
 						"outputs": [],
-						"execution_count": 7
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -1394,7 +1394,7 @@
 							""
 						],
 						"outputs": [],
-						"execution_count": 21
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -1421,45 +1421,67 @@
 							"usuariosHoroscopos = spark.createDataFrame(emptyRDD, schema)\r\n",
 							"\r\n",
 							"for users in tablaUsuarios.collect():\r\n",
-							"    registro = users[\"registro\"]\r\n",
 							"    idUsuario = users[\"id\"]\r\n",
-							"    \r\n",
-							"    if registro is not None:\r\n",
-							"        registro = registro.split(',')[0]\r\n",
-							"        registro = registro + \" 2022\"\r\n",
-							"        registro = datetime.strptime(registro, \"%b %d %Y\")\r\n",
+							"    for horos in tablaHoroscopos.collect():\r\n",
+							"        registro = users[\"registro\"]\r\n",
+							"        if registro is not None:\r\n",
+							"            registro = registro.split(',')[0]\r\n",
+							"            registro = registro + \" 2022\"\r\n",
+							"            registro = datetime.strptime(registro, \"%b %d %Y\")\r\n",
 							"\r\n",
-							"        for horos in tablaHoroscopos.collect():\r\n",
 							"            desde = horos[\"Desde\"]\r\n",
 							"            hasta =  horos[\"Hasta\"]\r\n",
+							"            signo = horos[\"Signo\"]\r\n",
+							"\r\n",
 							"            desde = desde + \" 2022\"\r\n",
 							"            hasta = hasta + \" 2022\"\r\n",
 							"\r\n",
 							"            desde = datetime.strptime(desde, \"%b %d %Y\")\r\n",
 							"            hasta = datetime.strptime(hasta, \"%b %d %Y\")\r\n",
 							"\r\n",
-							"            signo = horos[\"Signo\"]\r\n",
-							"            print (idUsuario)\r\n",
-							"            print (registro)\r\n",
-							"            print (desde)\r\n",
-							"            print (hasta)\r\n",
-							"\r\n",
+							"            if signo == \"capricorn\":\r\n",
+							"                desde = datetime.strptime(horos[\"Desde\"] + \" 2021\", \"%b %d %Y\")\r\n",
+							"                if registro >= datetime.strptime(\"2022-12-22\", \"%Y-%M-%d\"):\r\n",
+							"                    registro = users[\"registro\"]\r\n",
+							"                    registro = registro.split(',')[0]\r\n",
+							"                    registro = datetime.strptime(registro + \" 2021\", \"%b %d %Y\")\r\n",
+							"     \r\n",
 							"            if desde <= registro <= hasta:\r\n",
-							"                print(\"in between\")\r\n",
+							"                print (\"El usuario \"+idUsuario+\" con fecha de registró\")\r\n",
+							"                print (registro)\r\n",
+							"                print(\" está entre \")\r\n",
+							"                print (desde)\r\n",
+							"                print (hasta)\r\n",
+							"                print(\" por tanto es \"+signo)\r\n",
 							"\r\n",
 							"                newRow = spark.createDataFrame([(idUsuario,signo)], [\"idUsuario\",\"signo\"])\r\n",
 							"                usuariosHoroscopos = usuariosHoroscopos.union(newRow)\r\n",
-							"                break;\r\n",
-							"            else:\r\n",
-							"                print(\"No!\")\r\n",
-							"\r\n",
+							"                print (\"\\n\")\r\n",
+							"                break;    \r\n",
+							"        else:\r\n",
+							"            print (\"El usuario no tiene fecha de registró por tanto es NoSigno\")\r\n",
 							"            print (\"\\n\")\r\n",
+							"            newRow = spark.createDataFrame([(idUsuario,\"NoSigno\")], [\"idUsuario\",\"signo\"])\r\n",
+							"            usuariosHoroscopos = usuariosHoroscopos.union(newRow)\r\n",
+							"            break;\r\n",
 							"\r\n",
-							"usuariosHoroscopos.show()\r\n",
+							"try:\r\n",
+							"    usuariosHoroscopos.write \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .mode(\"overwrite\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"UsuariosHoroscopos\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password) \\\r\n",
+							"        .save()\r\n",
+							"except ValueError as error :\r\n",
+							"    print(\"MSSQL Connector write failed\", error)\r\n",
+							"\r\n",
+							"print(\"MSSQL Connector write(overwrite) succeeded  \")\r\n",
 							""
 						],
 						"outputs": [],
-						"execution_count": 123
+						"execution_count": 166
 					}
 				]
 			},
@@ -1937,6 +1959,18 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/sqlDedicado')]",
+			"type": "Microsoft.Synapse/workspaces/sqlPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"collation": "SQL_Latin1_General_CP1_CI_AS",
+				"maxSizeBytes": 263882790666240,
+				"annotations": []
+			},
+			"dependsOn": [],
+			"location": "eastus"
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/spark11')]",
 			"type": "Microsoft.Synapse/workspaces/bigDataPools",
 			"apiVersion": "2019-06-01-preview",
@@ -1956,18 +1990,6 @@
 				"sparkVersion": "3.2",
 				"isComputeIsolationEnabled": false,
 				"sessionLevelPackagesEnabled": false,
-				"annotations": []
-			},
-			"dependsOn": [],
-			"location": "eastus"
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/sqlDedicado')]",
-			"type": "Microsoft.Synapse/workspaces/sqlPools",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"collation": "SQL_Latin1_General_CP1_CI_AS",
-				"maxSizeBytes": 263882790666240,
 				"annotations": []
 			},
 			"dependsOn": [],
