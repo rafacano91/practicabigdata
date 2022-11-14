@@ -37,15 +37,6 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('workspaceName'), '/sqlDedicado')]",
-			"type": "Microsoft.Synapse/workspaces/sqlPools",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('workspaceName'), '/CopiaUsuariosTSV')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
@@ -858,7 +849,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "bd4515dd-4c75-4c24-81af-0a13c4a7eea7"
+						"spark.autotune.trackingId": "b71b53d4-e9ac-4446-8999-dcc2c5f09376"
 					}
 				},
 				"metadata": {
@@ -883,13 +874,15 @@
 						"sparkVersion": "3.2",
 						"nodeCount": 10,
 						"cores": 4,
-						"memory": 28
+						"memory": 28,
+						"automaticScaleJobs": false
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
+						"metadata": {},
 						"source": [
 							"spark.read.format(\"csv\").load(\"abfss://datalakegen2grupo11@f.campos.dfs.core.windows.net/userid-profile.tsv\").collect()"
 						],
@@ -1417,31 +1410,56 @@
 							}
 						},
 						"source": [
+							"from datetime import datetime\r\n",
+							"\r\n",
+							"emptyRDD = spark.sparkContext.emptyRDD()\r\n",
+							"\r\n",
+							"schema = StructType([\r\n",
+							"   StructField(\"idUsuario\", StringType(), True),\r\n",
+							"   StructField(\"signo\", StringType(), True)])\r\n",
+							"\r\n",
+							"usuariosHoroscopos = spark.createDataFrame(emptyRDD, schema)\r\n",
+							"\r\n",
 							"for users in tablaUsuarios.collect():\r\n",
 							"    registro = users[\"registro\"]\r\n",
-							"    registro = registro.split(\",\")[0]\r\n",
+							"    idUsuario = users[\"id\"]\r\n",
+							"    \r\n",
+							"    if registro is not None:\r\n",
+							"        registro = registro.split(',')[0]\r\n",
+							"        registro = registro + \" 2022\"\r\n",
+							"        registro = datetime.strptime(registro, \"%b %d %Y\")\r\n",
 							"\r\n",
-							"    for horos in tablaHoroscopos.collect():\r\n",
-							"        desde = horos[\"Desde\"]\r\n",
-							"        hasta =  horos[\"Hasta\"]\r\n",
-							"        print (\"Resgistro: \"+registro)\r\n",
-							"        print (\" desde : \"+desde)\r\n",
-							"        print (\" hasta : \"+hasta)\r\n",
-							"        \r\n",
+							"        for horos in tablaHoroscopos.collect():\r\n",
+							"            desde = horos[\"Desde\"]\r\n",
+							"            hasta =  horos[\"Hasta\"]\r\n",
+							"            desde = desde + \" 2022\"\r\n",
+							"            hasta = hasta + \" 2022\"\r\n",
 							"\r\n",
+							"            desde = datetime.strptime(desde, \"%b %d %Y\")\r\n",
+							"            hasta = datetime.strptime(hasta, \"%b %d %Y\")\r\n",
 							"\r\n",
-							"        if desde <= registro:\r\n",
-							"            if registro <= hasta:\r\n",
+							"            signo = horos[\"Signo\"]\r\n",
+							"            print (idUsuario)\r\n",
+							"            print (registro)\r\n",
+							"            print (desde)\r\n",
+							"            print (hasta)\r\n",
+							"\r\n",
+							"            if desde <= registro <= hasta:\r\n",
 							"                print(\"in between\")\r\n",
-							"        else:\r\n",
-							"            print(\"No!\")\r\n",
 							"\r\n",
-							"        print (\"\\n\")\r\n",
+							"                newRow = spark.createDataFrame([(idUsuario,signo)], [\"idUsuario\",\"signo\"])\r\n",
+							"                usuariosHoroscopos = usuariosHoroscopos.union(newRow)\r\n",
+							"                break;\r\n",
+							"            else:\r\n",
+							"                print(\"No!\")\r\n",
 							"\r\n",
+							"            print (\"\\n\")\r\n",
+							"\r\n",
+							"usuariosHoroscopos.show()\r\n",
 							""
 						],
 						"outputs": [],
-						"execution_count": 42
+						"execution_count": 123
 					}
 				]
 			},
@@ -2018,24 +2036,6 @@
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/managedVirtualNetworks/default')]"
 			]
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/SQL script 20')]",
-			"type": "Microsoft.Synapse/workspaces/sqlscripts",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"content": {
-					"query": "SELECT TOP (100) [id]\n,[gender]\n,[age]\n,[country]\n,[registered]\n FROM [dbo].[userid-profile]",
-					"metadata": {
-						"language": "sql"
-					},
-					"currentConnection": {
-						"databaseName": "sqlDedicado",
-						"poolName": "sqlDedicado"
-					}
-				}
-			},
-			"dependsOn": []
 		}
 	]
 }
