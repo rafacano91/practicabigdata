@@ -18,7 +18,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "7e7625b2-d712-45ec-bfc1-60c013c919c5"
+				"spark.autotune.trackingId": "2ee91faf-facd-4c8a-9f31-bc35e8de5755"
 			}
 		},
 		"metadata": {
@@ -492,6 +492,7 @@
 				},
 				"source": [
 					"\"\"\"Creacion Tabla UsuariosHoroscopo\"\"\"\r\n",
+					"from pyspark.sql.functions import *\r\n",
 					"tablaUsuarios = spark.read \\\r\n",
 					"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
 					"        .option(\"url\", url) \\\r\n",
@@ -514,35 +515,24 @@
 					"\r\n",
 					"usuariosHoroscopos = spark.createDataFrame([(\"0\",\"0\")], schema)\r\n",
 					"\r\n",
-					"tablaUsuarios.foreach(lambda x: \r\n",
+					"\"\"\"tablaUsuarios.foreach( lambda x: \r\n",
 					"\r\n",
-					"\r\n",
-					"tablaUsuarios = tablaUsuarios.filter(to_date(data(\"Desde\")x[\"registro\"].lt(x[\"registro\"]))   \r\n",
-					"\r\n",
-					"    tablaHoroscopos.where(x[\"registro\"]\" BETWEEN start_dt AND end_dt\").show()\r\n",
-					"        print(\"Data ==>\"+x[\"firstname\"]+\",\"+x[\"lastname\"]+\",\"+x[\"gender\"]+\",\"+str(x[\"salary\"]*2))\r\n",
+					"    tablaHoroscopos.foreach( lambda y: \r\n",
+					"        tablaUsuarios = tablaUsuarios.filter(to_date(x[\"registro\"]).between(x[\"Desde\"],x[\"Hasta\"])).show()  \r\n",
 					"    )\r\n",
 					"\r\n",
-					"usuariosHoroscopos.union(tablaHoroscopos)\r\n",
+					")\r\n",
+					"\"\"\"\r\n",
+					"tablaUsuarios = tablaUsuarios.collect()\r\n",
+					"tablaHoroscopos = tablaHoroscopos\r\n",
 					"\r\n",
-					"\r\n",
-					"tablaHoroscopos.where(\"'2018-12-31' BETWEEN start_dt AND end_dt\").show()\r\n",
-					"\r\n",
-					"\r\n",
-					"\r\n",
-					"\r\n",
-					"\r\n",
-					"\r\n",
-					"\r\n",
-					"\r\n",
-					"\"\"\"tablaUsuarios.join(tablaHoroscopos,empDF.emp_dept_id ==  deptDF.dept_id,\"inner\") \\\r\n",
-					"     .show(truncate=False)\"\"\"\r\n",
-					"\r\n",
-					"\r\n",
-					"\r\n",
-					"\"\"\"datediff(current_date(),col(\"date\")).alias(\"datediff\")\"\"\""
+					"for x in tablaUsuarios:\r\n",
+					"    to_date(x[\"registro\"],\"\").show()\r\n",
+					"    for y in tablaHoroscopos:\r\n",
+					"        tablaUsuarios = tablaUsuarios.filter(to_date(data(x[\"registro\"]).between(y[\"Desde\"],y[\"Hasta\"])).show()  \"\"\"\r\n",
+					""
 				],
-				"execution_count": 34
+				"execution_count": 68
 			},
 			{
 				"cell_type": "code",
