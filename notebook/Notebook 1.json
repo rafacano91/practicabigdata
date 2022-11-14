@@ -18,7 +18,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "410caf00-815c-402f-943d-4b5e8b12e8d2"
+				"spark.autotune.trackingId": "77dd6c7d-6b4e-40a2-ba8f-8db66556e8d0"
 			}
 		},
 		"metadata": {
@@ -563,24 +563,28 @@
 				"source": [
 					"for users in tablaUsuarios.collect():\r\n",
 					"    registro = users[\"registro\"]\r\n",
-					"    print (\"Resgistro: \"+registro)\r\n",
+					"    registro = registro.split(\",\")[0]\r\n",
 					"\r\n",
 					"    for horos in tablaHoroscopos.collect():\r\n",
 					"        desde = horos[\"Desde\"]\r\n",
 					"        hasta =  horos[\"Hasta\"]\r\n",
+					"        print (\"Resgistro: \"+registro)\r\n",
 					"        print (\" desde : \"+desde)\r\n",
 					"        print (\" hasta : \"+hasta)\r\n",
-					"        print (\"\\n\")\r\n",
+					"        \r\n",
 					"\r\n",
 					"\r\n",
-					"        if desde <= registro <= hasta:\r\n",
-					"            print(\"in between\")\r\n",
+					"        if desde <= registro:\r\n",
+					"            if registro <= hasta:\r\n",
+					"                print(\"in between\")\r\n",
 					"        else:\r\n",
 					"            print(\"No!\")\r\n",
 					"\r\n",
+					"        print (\"\\n\")\r\n",
+					"\r\n",
 					""
 				],
-				"execution_count": 96
+				"execution_count": 42
 			}
 		]
 	}
