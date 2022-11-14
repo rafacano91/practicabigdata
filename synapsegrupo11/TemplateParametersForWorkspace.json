@@ -11,6 +11,9 @@
 		"AzureSqlDatabase1_connectionString": {
 			"value": ""
 		},
+		"AzureSynapseAnalytics1_connectionString": {
+			"value": ""
+		},
 		"synapsegrupo11-WorkspaceDefaultSqlServer_connectionString": {
 			"value": ""
 		},

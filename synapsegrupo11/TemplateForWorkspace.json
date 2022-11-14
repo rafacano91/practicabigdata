@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Cadena protegida para \"connectionString\"de \"AzureSqlDatabase1\""
 		},
+		"AzureSynapseAnalytics1_connectionString": {
+			"type": "secureString",
+			"metadata": "Cadena protegida para \"connectionString\"de \"AzureSynapseAnalytics1\""
+		},
 		"synapsegrupo11-WorkspaceDefaultSqlServer_connectionString": {
 			"type": "secureString",
 			"metadata": "Cadena protegida para \"connectionString\"de \"synapsegrupo11-WorkspaceDefaultSqlServer\""
@@ -73,6 +77,25 @@
 				"type": "AzureSqlDatabase",
 				"typeProperties": {
 					"connectionString": "[parameters('AzureSqlDatabase1_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/AzureSynapseAnalytics1')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureSynapseAnalytics1_connectionString')]"
 				},
 				"connectVia": {
 					"referenceName": "AutoResolveIntegrationRuntime",
@@ -576,7 +599,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "77026a69-1e6d-4b03-92f8-3da66e0bd02d"
+						"spark.autotune.trackingId": "58d20ecd-17b9-40df-8d4b-eed2ca8d61da"
 					}
 				},
 				"metadata": {
@@ -1067,6 +1090,7 @@
 						},
 						"source": [
 							"\"\"\"Creacion Tabla UsuariosHoroscopo\"\"\"\r\n",
+							"from pyspark.sql.functions import *\r\n",
 							"tablaUsuarios = spark.read \\\r\n",
 							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
 							"        .option(\"url\", url) \\\r\n",
@@ -1089,36 +1113,25 @@
 							"\r\n",
 							"usuariosHoroscopos = spark.createDataFrame([(\"0\",\"0\")], schema)\r\n",
 							"\r\n",
-							"tablaUsuarios.foreach(lambda x: \r\n",
+							"\"\"\"tablaUsuarios.foreach( lambda x: \r\n",
 							"\r\n",
-							"\r\n",
-							"tablaUsuarios = tablaUsuarios.filter(to_date(data(\"Desde\")x[\"registro\"].lt(x[\"registro\"]))   \r\n",
-							"\r\n",
-							"    tablaHoroscopos.where(x[\"registro\"]\" BETWEEN start_dt AND end_dt\").show()\r\n",
-							"        print(\"Data ==>\"+x[\"firstname\"]+\",\"+x[\"lastname\"]+\",\"+x[\"gender\"]+\",\"+str(x[\"salary\"]*2))\r\n",
+							"    tablaHoroscopos.foreach( lambda y: \r\n",
+							"        tablaUsuarios = tablaUsuarios.filter(to_date(x[\"registro\"]).between(x[\"Desde\"],x[\"Hasta\"])).show()  \r\n",
 							"    )\r\n",
 							"\r\n",
-							"usuariosHoroscopos.union(tablaHoroscopos)\r\n",
+							")\r\n",
+							"\"\"\"\r\n",
+							"tablaUsuarios = tablaUsuarios.collect()\r\n",
+							"tablaHoroscopos = tablaHoroscopos\r\n",
 							"\r\n",
-							"\r\n",
-							"tablaHoroscopos.where(\"'2018-12-31' BETWEEN start_dt AND end_dt\").show()\r\n",
-							"\r\n",
-							"\r\n",
-							"\r\n",
-							"\r\n",
-							"\r\n",
-							"\r\n",
-							"\r\n",
-							"\r\n",
-							"\"\"\"tablaUsuarios.join(tablaHoroscopos,empDF.emp_dept_id ==  deptDF.dept_id,\"inner\") \\\r\n",
-							"     .show(truncate=False)\"\"\"\r\n",
-							"\r\n",
-							"\r\n",
-							"\r\n",
-							"\"\"\"datediff(current_date(),col(\"date\")).alias(\"datediff\")\"\"\""
+							"for x in tablaUsuarios:\r\n",
+							"    to_date(x[\"registro\"],\"\").show()\r\n",
+							"    for y in tablaHoroscopos:\r\n",
+							"        tablaUsuarios = tablaUsuarios.filter(to_date(data(x[\"registro\"]).between(y[\"Desde\"],y[\"Hasta\"])).show()  \"\"\"\r\n",
+							""
 						],
 						"outputs": [],
-						"execution_count": 34
+						"execution_count": 68
 					},
 					{
 						"cell_type": "code",
@@ -1635,6 +1648,18 @@
 				"sparkVersion": "3.2",
 				"isComputeIsolationEnabled": false,
 				"sessionLevelPackagesEnabled": false,
+				"annotations": []
+			},
+			"dependsOn": [],
+			"location": "eastus"
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/sqlDedicado')]",
+			"type": "Microsoft.Synapse/workspaces/sqlPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"collation": "SQL_Latin1_General_CP1_CI_AS",
+				"maxSizeBytes": 263882790666240,
 				"annotations": []
 			},
 			"dependsOn": [],
