@@ -286,6 +286,86 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 15')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "IF NOT EXISTS (\n    SELECT * FROM sys.objects O JOIN sys.schemas S ON O.schema_id = S.schema_id WHERE O.NAME = 'NYCTaxiTripSmall' AND O.TYPE = 'U' AND S.NAME = 'dbo')\nCREATE TABLE dbo.userid_profile_test\n    (\n     [id] VARCHAR (255) COLLATE Latin1_General_BIN2,\n\n    [gender] VARCHAR (255) COLLATE Latin1_General_BIN2,\n\n    [age] NUMERIC,\n\n    [country]  VARCHAR (255) COLLATE Latin1_General_BIN2,\n\n    [registered]  VARCHAR (255) COLLATE Latin1_General_BIN2 )\n\nWITH\n    (\n    DISTRIBUTION = ROUND_ROBIN,\n     CLUSTERED COLUMNSTORE INDEX\n     -- HEAP\n    )\nGO\n\nCOPY INTO dbo.NYCTaxiTripSmall\n(DateID 1, MedallionID 2, HackneyLicenseID 3, PickupTimeID 4, DropoffTimeID 5,\nPickupGeographyID 6, DropoffGeographyID 7, PickupLatitude 8, PickupLongitude 9, \nPickupLatLong 10, DropoffLatitude 11, DropoffLongitude 12, DropoffLatLong 13, \nPassengerCount 14, TripDurationSeconds 15, TripDistanceMiles 16, PaymentType 17, \nFareAmount 18, SurchargeAmount 19, TaxAmount 20, TipAmount 21, TollsAmount 22, \nTotalAmount 23)\nFROM 'https://contosolake.dfs.core.windows.net/users/NYCTripSmall.parquet'\nWITH\n(\n    FILE_TYPE = 'PARQUET'\n    ,MAXERRORS = 0\n    ,IDENTITY_INSERT = 'OFF'\n)",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "Database1",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 16')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "Database1",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 17')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "-- This is auto-generated code\nSELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK 'https://datalakegen2grupo11.dfs.core.windows.net/datalakegen2grupo11/user/trusted-service-user/brutos/userid-profile.tsv',\n        FORMAT = 'CSV',\n        PARSER_VERSION = '2.0',\n        FIELDTERMINATOR ='\\t'\n    ) AS [result]\n",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "master",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 19')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SELECT TOP (100) [id]\n,[gender]\n,[age]\n,[country]\n,[registered]\n FROM [default].[dbo].[test01]",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "default",
+						"poolName": "Built-in"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/SQL script 2')]",
 			"type": "Microsoft.Synapse/workspaces/sqlscripts",
 			"apiVersion": "2019-06-01-preview",
@@ -467,7 +547,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "c4397d7f-fd58-4f43-a963-59fe13453130"
+						"spark.autotune.trackingId": "ae34ded0-6fd3-407c-8ad0-17761dfc8086"
 					}
 				},
 				"metadata": {
@@ -492,20 +572,18 @@
 						"sparkVersion": "3.2",
 						"nodeCount": 10,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"spark.read.format(\"csv\").load(\"abfss://datalakegen2grupo11@f.campos.dfs.core.windows.net/userid-profile.tsv\").collect()"
 						],
 						"outputs": [],
-						"execution_count": 2
+						"execution_count": 1
 					},
 					{
 						"cell_type": "code",
@@ -543,7 +621,7 @@
 							""
 						],
 						"outputs": [],
-						"execution_count": 4
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -563,7 +641,7 @@
 							""
 						],
 						"outputs": [],
-						"execution_count": 7
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -582,7 +660,7 @@
 							"mssparkutils.fs.ls('datalakegen2grupo11@r.cano.dfs.core.windows.net/')"
 						],
 						"outputs": [],
-						"execution_count": 8
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -607,7 +685,7 @@
 							"display(df.limit(10))"
 						],
 						"outputs": [],
-						"execution_count": 14
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -626,7 +704,7 @@
 							"mssparkutils.fs.ls('hola')"
 						],
 						"outputs": [],
-						"execution_count": 19
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -645,7 +723,7 @@
 							"mssparkutils.fs.ls('/')"
 						],
 						"outputs": [],
-						"execution_count": 30
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -664,7 +742,7 @@
 							"mssparkutils.fs.mkdirs('hola')"
 						],
 						"outputs": [],
-						"execution_count": 18
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -683,7 +761,7 @@
 							"mssparkutils.fs.head('brutos/userid-profile.tsv', 500)"
 						],
 						"outputs": [],
-						"execution_count": 5
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -711,7 +789,7 @@
 							"[,ENCODING = {'UTF8'}]"
 						],
 						"outputs": [],
-						"execution_count": 5
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -740,7 +818,7 @@
 							"    ) as rows"
 						],
 						"outputs": [],
-						"execution_count": 1
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -769,7 +847,7 @@
 							""
 						],
 						"outputs": [],
-						"execution_count": 28
+						"execution_count": null
 					},
 					{
 						"cell_type": "code",
@@ -812,79 +890,81 @@
 							"print(\"MSSQL Connector write(overwrite) succeeded  \")"
 						],
 						"outputs": [],
-						"execution_count": 29
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							},
-							"microsoft": {
-								"language": "python"
-							}
-						},
-						"source": [
-							"%%pyspark\r\n",
-							"\"\"\"configuracion de tabla maestra primer csv\"\"\"\r\n",
-							"df = spark.read.option(\"delimiter\",\"\\t\").option(\"header\",\"true\").csv(\"brutos/userid-profile.tsv\")\r\n",
-							"df = df.drop(\"gender\").drop(\"age\").withColumnRenamed(\"country\",\"pais\").withColumnRenamed(\"registered\",\"registro\")\r\n",
-							"\r\n",
-							"servername = \"jdbc:sqlserver://practicabigdata.database.windows.net:1433\"\r\n",
-							"dbname = \"Practica\"\r\n",
-							"url = servername + \";\" + \"databaseName=\" + dbname + \";\"\r\n",
-							"dbtable = \"Usuarios\"\r\n",
-							"user = \"practicabigdata\" \r\n",
-							"password = \"BigData123\"\r\n",
-							"\r\n",
-							"try:\r\n",
-							"  df.write \\\r\n",
-							"    .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
-							"    .mode(\"overwrite\") \\\r\n",
-							"    .option(\"url\", url) \\\r\n",
-							"    .option(\"dbtable\", dbtable) \\\r\n",
-							"    .option(\"user\", user) \\\r\n",
-							"    .option(\"password\", password) \\\r\n",
-							"    .save()\r\n",
-							"except ValueError as error :\r\n",
-							"    print(\"MSSQL Connector write failed\", error)\r\n",
-							"\r\n",
-							"print(\"MSSQL Connector write(overwrite) succeeded  \")\r\n",
-							""
-						],
-						"outputs": [],
-						"execution_count": 21
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							},
-							"microsoft": {
-								"language": "python"
-							}
-						},
-						"source": [
-							"%%pyspark\r\n",
-							"//configuracion de tabla maestra segundo csv\r\n",
-							"df = spark.read.option(\"delimiter\",\"\\t\").option(\"header\",\"true\").csv(\"brutos/userid-timestamp-artid-artname-traid-traname.tsv\")\r\n",
-							"df.drop(\"gender\").drop(\"age\").withColumnRenamed(\"country\",\"pais\").withColumnRenamed(\"registered\",\"registro\").show()"
-						],
-						"outputs": [],
 						"execution_count": null
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Notebook 2')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "spark11",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 2,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2",
+						"spark.autotune.trackingId": "260bd283-6d8e-4ed8-ad33-223fd3f77913"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/f98c40cb-c627-4c43-9ac4-d10bb7b42e04/resourceGroups/RG_MASTER_OCT22_GROUP11/providers/Microsoft.Synapse/workspaces/synapsegrupo11/bigDataPools/spark11",
+						"name": "spark11",
+						"type": "Spark",
+						"endpoint": "https://synapsegrupo11.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/spark11",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net"
+						},
+						"sparkVersion": "3.2",
+						"nodeCount": 10,
+						"cores": 4,
+						"memory": 28,
+						"automaticScaleJobs": false
+					},
+					"sessionKeepAliveTimeout": 30
+				},
+				"cells": [
+					{
+						"cell_type": "code",
+						"metadata": {
+							"microsoft": {
+								"language": "python"
+							}
+						},
+						"source": [
+							"%%pyspark\r\n",
+							"df = spark.read.load('abfss://datalakegen2grupo11@datalakegen2grupo11.dfs.core.windows.net/user/trusted-service-user/brutos/userid-profile.tsv', format='csv', delimiter ='\\t'\r\n",
+							"## If header exists uncomment line below\r\n",
+							", header=True\r\n",
+							")\r\n",
+							"df.write.mode(\"overwrite\").saveAsTable(\"Database1.test01\")"
+						],
+						"outputs": [],
+						"execution_count": 7
 					}
 				]
 			},
