@@ -72,8 +72,7 @@
 									"enablePartitionDiscovery": false
 								},
 								"formatSettings": {
-									"type": "DelimitedTextReadSettings",
-									"skipLineCount": 0
+									"type": "DelimitedTextReadSettings"
 								}
 							},
 							"sink": {
@@ -178,6 +177,29 @@
 				"[concat(variables('workspaceId'), '/datasets/SourceDataset_cgk')]",
 				"[concat(variables('workspaceId'), '/datasets/DestinationDataset_cgk')]",
 				"[concat(variables('workspaceId'), '/linkedServices/AzureBlobStorage1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Dataset')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "synapsegrupo11-WorkspaceDefaultSqlServer",
+					"type": "LinkedServiceReference",
+					"parameters": {
+						"DBName": "sqlDedicado"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"schema": [],
+				"typeProperties": {
+					"tableName": "dbo.userid-profile"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/synapsegrupo11-WorkspaceDefaultSqlServer')]"
 			]
 		},
 		{
@@ -688,6 +710,26 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/SQL script 20')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "SELECT TOP (100) [id]\n,[gender]\n,[age]\n,[country]\n,[registered]\n FROM [dbo].[userid-profile]",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"databaseName": "sqlDedicado",
+						"poolName": "sqlDedicado"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/SQL script 3')]",
 			"type": "Microsoft.Synapse/workspaces/sqlscripts",
 			"apiVersion": "2019-06-01-preview",
@@ -849,7 +891,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "c48269d5-6c6c-4036-b0e4-567e08135929"
+						"spark.autotune.trackingId": "5c86494f-c931-4e94-9303-0f0b4a957492"
 					}
 				},
 				"metadata": {
@@ -874,15 +916,13 @@
 						"sparkVersion": "3.2",
 						"nodeCount": 10,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"spark.read.format(\"csv\").load(\"abfss://datalakegen2grupo11@f.campos.dfs.core.windows.net/userid-profile.tsv\").collect()"
 						],
@@ -1508,7 +1548,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "bd313912-841d-4d2a-8e15-2c26f929b54b"
+						"spark.autotune.trackingId": "5e220323-ac6a-444d-b985-d67da4d04087"
 					}
 				},
 				"metadata": {
@@ -1533,28 +1573,127 @@
 						"sparkVersion": "3.2",
 						"nodeCount": 10,
 						"cores": 4,
-						"memory": 28
+						"memory": 28,
+						"automaticScaleJobs": false
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
+						"metadata": {},
+						"source": [
+							"from datetime import datetime\r\n",
+							"\r\n",
+							"from pyspark.sql.types import StructType,StructField, StringType, IntegerType\r\n",
+							"\r\n",
+							"from pyspark.sql.functions import col\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"servername = \"jdbc:sqlserver://practicabigdata.database.windows.net:1433\"\r\n",
+							"\r\n",
+							"dbname = \"Practica\"\r\n",
+							"\r\n",
+							"url = servername + \";\" + \"databaseName=\" + dbname + \";\"\r\n",
+							"\r\n",
+							"user = \"practicabigdata\" \r\n",
+							"\r\n",
+							"password = \"BigData123\"\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"tablaUsuarios = spark.read \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"Usuarios\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password).load()\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"tablaHoroscopos = spark.read \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"horoscopos\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password).load()\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"tablaPaises = spark.read \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"paises\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password).load()\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"tablaUsuarios.show()\r\n",
+							"\r\n",
+							"tablaHoroscopos.show()\r\n",
+							"\r\n",
+							"tablaPaises.show()\r\n",
+							"\r\n",
+							"tablaUsuarios = tablaUsuarios.withColumnRenamed(\"id\",\"idUsuario\")\r\n",
+							"tablaPaises = tablaPaises.withColumnRenamed(\"ID\",\"idPaisContinente\")\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"tablaUsuarios= tablaUsuarios.alias('a').join(tablaPaises.alias('b'),F.expr(\"a.pais like concat('%',b.nombre,'%') or b.nombre like concat('%',a.pais,'%')\"),\"left\")\r\n",
+							"#tablaUsuarios= tablaUsuarios.alias('a').join(tablaPaises.alias('b'),F.expr(\"b.nombre like concat('%',a.pais,'%')\"),\"left\")\r\n",
+							"tablaUsuarios.show()\r\n",
+							"tablaUsuarios = tablaUsuarios.drop(\"Nombre\").drop(\"Continente\").drop(\"pais\").drop(\"registro\")\r\n",
+							"\r\n",
+							"tablaUsuarios.show()"
+						],
+						"outputs": [],
+						"execution_count": 35
+					},
+					{
+						"cell_type": "code",
 						"metadata": {
-							"microsoft": {
-								"language": "python"
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
 							}
 						},
 						"source": [
-							"%%pyspark\r\n",
-							"df = spark.read.load('abfss://datalakegen2grupo11@datalakegen2grupo11.dfs.core.windows.net/user/trusted-service-user/brutos/userid-profile.tsv', format='csv', delimiter ='\\t'\r\n",
-							"## If header exists uncomment line below\r\n",
-							", header=True\r\n",
-							")\r\n",
-							"df.write.mode(\"overwrite\").saveAsTable(\"Database1.test01\")"
+							"try:\r\n",
+							"\r\n",
+							"    tablaUsuarios.write \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .mode(\"overwrite\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"UsuarioPaisContinente\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password) \\\r\n",
+							"        .save()\r\n",
+							"\r\n",
+							"except ValueError as error :\r\n",
+							"\r\n",
+							"    print(\"MSSQL Connector write failed\", error)\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"print(\"MSSQL Connector write(overwrite) succeeded  \")"
 						],
 						"outputs": [],
-						"execution_count": 7
+						"execution_count": 36
 					}
 				]
 			},
@@ -1959,18 +2098,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/sqlDedicado')]",
-			"type": "Microsoft.Synapse/workspaces/sqlPools",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"collation": "SQL_Latin1_General_CP1_CI_AS",
-				"maxSizeBytes": 263882790666240,
-				"annotations": []
-			},
-			"dependsOn": [],
-			"location": "eastus"
-		},
-		{
 			"name": "[concat(parameters('workspaceName'), '/spark11')]",
 			"type": "Microsoft.Synapse/workspaces/bigDataPools",
 			"apiVersion": "2019-06-01-preview",
@@ -1990,6 +2117,18 @@
 				"sparkVersion": "3.2",
 				"isComputeIsolationEnabled": false,
 				"sessionLevelPackagesEnabled": false,
+				"annotations": []
+			},
+			"dependsOn": [],
+			"location": "eastus"
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/sqlDedicado')]",
+			"type": "Microsoft.Synapse/workspaces/sqlPools",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"collation": "SQL_Latin1_General_CP1_CI_AS",
+				"maxSizeBytes": 263882790666240,
 				"annotations": []
 			},
 			"dependsOn": [],
