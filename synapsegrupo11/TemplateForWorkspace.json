@@ -891,7 +891,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "5c86494f-c931-4e94-9303-0f0b4a957492"
+						"spark.autotune.trackingId": "d950c779-75c7-4e89-afe8-685ff84b3f35"
 					}
 				},
 				"metadata": {
@@ -1548,7 +1548,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "5e220323-ac6a-444d-b985-d67da4d04087"
+						"spark.autotune.trackingId": "be895e83-ebc4-4678-952c-3bc6a0b1eb2b"
 					}
 				},
 				"metadata": {
@@ -1587,7 +1587,9 @@
 							"\r\n",
 							"from pyspark.sql.types import StructType,StructField, StringType, IntegerType\r\n",
 							"\r\n",
-							"from pyspark.sql.functions import col\r\n",
+							"#from pyspark.sql.functions import col\r\n",
+							"import pyspark.sql.functions as F\r\n",
+							"\r\n",
 							"\r\n",
 							"\r\n",
 							"\r\n",
@@ -1657,7 +1659,7 @@
 							"tablaUsuarios.show()"
 						],
 						"outputs": [],
-						"execution_count": 35
+						"execution_count": 40
 					},
 					{
 						"cell_type": "code",
@@ -1673,6 +1675,7 @@
 							}
 						},
 						"source": [
+							"#crear tabla UsuarioPaisContinente\r\n",
 							"try:\r\n",
 							"\r\n",
 							"    tablaUsuarios.write \\\r\n",
@@ -1694,6 +1697,84 @@
 						],
 						"outputs": [],
 						"execution_count": 36
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"\"\"\" --Se necesita saber cuántos usuarios por país pertenecen a cada signo del horóscopo\r\n",
+							"select count(*) as users, p.nombre, uh.signo\r\n",
+							"from Usuarios u, dbo.paises p, dbo.UsuariosHoroscopos uh\r\n",
+							"where \tu.pais = p.nombre \r\n",
+							"\t\tand u.id = uh.idUsuario\r\n",
+							"\t\tand u.pais = p.nombre\r\n",
+							"group by p.nombre, uh.signo\r\n",
+							"order by p.nombre\r\n",
+							"; \r\n",
+							"\r\n",
+							"select count(*) as users, p.nombre, uh.signo\r\n",
+							"from    dbo.UsuariosHoroscopos uh inner join dbo.Usuarios u on u.id = uh.idUsuario\r\n",
+							"        inner join dbo.paises p on u.pais = p.nombre \r\n",
+							"group by p.nombre, uh.signo\r\n",
+							"order by p.nombre\r\n",
+							"\r\n",
+							"\"\"\"\r\n",
+							"from pyspark.sql import SparkSession\r\n",
+							"\r\n",
+							"tablaUsuarios = spark.read \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"Usuarios\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password).load()\r\n",
+							"\r\n",
+							"tablaPaises = spark.read \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"paises\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password).load()\r\n",
+							"\r\n",
+							"tablaUsuariosHoroscopos = spark.read \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"UsuariosHoroscopos\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password).load()\r\n",
+							"\r\n",
+							"tablaUsuarioPaisHoroscopo= tablaUsuariosHoroscopos.alias('uh') \\\r\n",
+							"    .join(tablaUsuarios.alias('u') \\\r\n",
+							"    .join(tablaPaises.alias('b')))\r\n",
+							"\r\n",
+							"tablaUsuarioPaisHoroscopo.show()\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"#tablaUsuarioPaisHoroscopo.drop(\"Nombre\").drop(\"Continente\").drop(\"pais\").drop(\"registro\")\r\n",
+							"tablaUsuarios.createOrReplaceTempView(\"tablaUsuarios\")\r\n",
+							"tablaPaises.createOrReplaceTempView(\"tablaPaises\")\r\n",
+							"tablaUsuariosHoroscopos.createOrReplaceTempView(\"tablaUsuariosHoroscopos\")\r\n",
+							"\r\n",
+							"tablaUsuarioPaisHoroscopo2 = spark.sql(\"select count(*) as users, p.nombre, uh.signo from tablaUsuariosHoroscopos uh inner join tablaUsuarios u on u.id = uh.idUsuario inner join tablaPaises p on u.pais = p.nombre group by p.nombre, uh.signo order by p.nombre \");\r\n",
+							"#tablaUsuarioPaisHoroscopo2 = spark.sql(\"select count(*) as users, p.nombre, uh.signo from tablaUsuarios u, tablaPaises p, tablaUsuariosHoroscopos uh where u.pais = p.nombre and u.id = uh.idUsuario and u.pais = p.nombre group by p.nombre, uh.signo order by p.nombre\");\r\n",
+							"\r\n",
+							"#spark.sql(\"select count(*) as users, p.nombre, uh.signo from dbo.Usuarios u, dbo.paises p, dbo.UsuariosHoroscopos uh where u.pais = p.nombre and u.id = uh.idUsuario and u.pais = p.nombre group by p.nombre, uh.signo order by p.nombre\").show()\r\n",
+							"\r\n",
+							"tablaUsuarioPaisHoroscopo2.show()\r\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 57
 					}
 				]
 			},
