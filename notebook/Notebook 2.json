@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "bd313912-841d-4d2a-8e15-2c26f929b54b"
+				"spark.autotune.trackingId": "bdbea1d3-c3ee-45e1-96e7-3b8a48848943"
 			}
 		},
 		"metadata": {
@@ -50,20 +50,116 @@
 		"cells": [
 			{
 				"cell_type": "code",
+				"source": [
+					"from datetime import datetime\r\n",
+					"\r\n",
+					"from pyspark.sql.types import StructType,StructField, StringType, IntegerType\r\n",
+					"\r\n",
+					"from pyspark.sql.functions import col\r\n",
+					"\r\n",
+					"\r\n",
+					"\r\n",
+					"\r\n",
+					"\r\n",
+					"servername = \"jdbc:sqlserver://practicabigdata.database.windows.net:1433\"\r\n",
+					"\r\n",
+					"dbname = \"Practica\"\r\n",
+					"\r\n",
+					"url = servername + \";\" + \"databaseName=\" + dbname + \";\"\r\n",
+					"\r\n",
+					"user = \"practicabigdata\" \r\n",
+					"\r\n",
+					"password = \"BigData123\"\r\n",
+					"\r\n",
+					"\r\n",
+					"\r\n",
+					"\r\n",
+					"tablaUsuarios = spark.read \\\r\n",
+					"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+					"        .option(\"url\", url) \\\r\n",
+					"        .option(\"dbtable\", \"Usuarios\") \\\r\n",
+					"        .option(\"user\", user) \\\r\n",
+					"        .option(\"password\", password).load()\r\n",
+					"\r\n",
+					"\r\n",
+					"\r\n",
+					"tablaHoroscopos = spark.read \\\r\n",
+					"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+					"        .option(\"url\", url) \\\r\n",
+					"        .option(\"dbtable\", \"horoscopos\") \\\r\n",
+					"        .option(\"user\", user) \\\r\n",
+					"        .option(\"password\", password).load()\r\n",
+					"\r\n",
+					"\r\n",
+					"\r\n",
+					"tablaPaises = spark.read \\\r\n",
+					"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+					"        .option(\"url\", url) \\\r\n",
+					"        .option(\"dbtable\", \"paises\") \\\r\n",
+					"        .option(\"user\", user) \\\r\n",
+					"        .option(\"password\", password).load()\r\n",
+					"\r\n",
+					"\r\n",
+					"\r\n",
+					"\r\n",
+					"\r\n",
+					"\r\n",
+					"tablaUsuarios.show()\r\n",
+					"\r\n",
+					"tablaHoroscopos.show()\r\n",
+					"\r\n",
+					"tablaPaises.show()\r\n",
+					"\r\n",
+					"tablaUsuarios = tablaUsuarios.withColumnRenamed(\"id\",\"idUsuario\")\r\n",
+					"tablaPaises = tablaPaises.withColumnRenamed(\"ID\",\"idPaisContinente\")\r\n",
+					"\r\n",
+					"\r\n",
+					"\r\n",
+					"\r\n",
+					"\r\n",
+					"tablaUsuarios= tablaUsuarios.alias('a').join(tablaPaises.alias('b'),F.expr(\"a.pais like concat('%',b.nombre,'%') or b.nombre like concat('%',a.pais,'%')\"),\"left\")\r\n",
+					"#tablaUsuarios= tablaUsuarios.alias('a').join(tablaPaises.alias('b'),F.expr(\"b.nombre like concat('%',a.pais,'%')\"),\"left\")\r\n",
+					"tablaUsuarios.show()\r\n",
+					"tablaUsuarios = tablaUsuarios.drop(\"Nombre\").drop(\"Continente\").drop(\"pais\").drop(\"registro\")\r\n",
+					"\r\n",
+					"tablaUsuarios.show()"
+				],
+				"execution_count": 35
+			},
+			{
+				"cell_type": "code",
 				"metadata": {
-					"microsoft": {
-						"language": "python"
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
 					}
 				},
 				"source": [
-					"%%pyspark\r\n",
-					"df = spark.read.load('abfss://datalakegen2grupo11@datalakegen2grupo11.dfs.core.windows.net/user/trusted-service-user/brutos/userid-profile.tsv', format='csv', delimiter ='\\t'\r\n",
-					"## If header exists uncomment line below\r\n",
-					", header=True\r\n",
-					")\r\n",
-					"df.write.mode(\"overwrite\").saveAsTable(\"Database1.test01\")"
+					"try:\r\n",
+					"\r\n",
+					"    tablaUsuarios.write \\\r\n",
+					"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+					"        .mode(\"overwrite\") \\\r\n",
+					"        .option(\"url\", url) \\\r\n",
+					"        .option(\"dbtable\", \"UsuarioPaisContinente\") \\\r\n",
+					"        .option(\"user\", user) \\\r\n",
+					"        .option(\"password\", password) \\\r\n",
+					"        .save()\r\n",
+					"\r\n",
+					"except ValueError as error :\r\n",
+					"\r\n",
+					"    print(\"MSSQL Connector write failed\", error)\r\n",
+					"\r\n",
+					"\r\n",
+					"\r\n",
+					"print(\"MSSQL Connector write(overwrite) succeeded  \")"
 				],
-				"execution_count": 7
+				"execution_count": 36
 			}
 		]
 	}
