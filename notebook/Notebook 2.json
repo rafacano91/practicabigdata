@@ -4,20 +4,20 @@
 		"nbformat": 4,
 		"nbformat_minor": 2,
 		"bigDataPool": {
-			"referenceName": "spark11",
+			"referenceName": "grupo112",
 			"type": "BigDataPoolReference"
 		},
 		"sessionProperties": {
-			"driverMemory": "28g",
+			"driverMemory": "30g",
 			"driverCores": 4,
-			"executorMemory": "28g",
-			"executorCores": 4,
+			"executorMemory": "60g",
+			"executorCores": 12,
 			"numExecutors": 2,
 			"conf": {
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "54b8b7c4-7fbb-4789-9562-5825ff556ef8"
+				"spark.autotune.trackingId": "446c68d3-4f61-41ef-af94-450704c3cb41"
 			}
 		},
 		"metadata": {
@@ -31,18 +31,18 @@
 				"name": "python"
 			},
 			"a365ComputeOptions": {
-				"id": "/subscriptions/f98c40cb-c627-4c43-9ac4-d10bb7b42e04/resourceGroups/RG_MASTER_OCT22_GROUP11/providers/Microsoft.Synapse/workspaces/synapsegrupo11/bigDataPools/spark11",
-				"name": "spark11",
+				"id": "/subscriptions/f98c40cb-c627-4c43-9ac4-d10bb7b42e04/resourceGroups/RG_MASTER_OCT22_GROUP11/providers/Microsoft.Synapse/workspaces/synapsegrupo11/bigDataPools/grupo112",
+				"name": "grupo112",
 				"type": "Spark",
-				"endpoint": "https://synapsegrupo11.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/spark11",
+				"endpoint": "https://synapsegrupo11.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/grupo112",
 				"auth": {
 					"type": "AAD",
 					"authResource": "https://dev.azuresynapse.net"
 				},
 				"sparkVersion": "3.2",
 				"nodeCount": 10,
-				"cores": 4,
-				"memory": 28,
+				"cores": 16,
+				"memory": 110,
 				"automaticScaleJobs": false
 			},
 			"sessionKeepAliveTimeout": 30
@@ -126,7 +126,7 @@
 					"\r\n",
 					"tablaUsuarios.show()"
 				],
-				"execution_count": 40
+				"execution_count": 1
 			},
 			{
 				"cell_type": "code",
@@ -218,28 +218,69 @@
 					"        .option(\"user\", user) \\\r\n",
 					"        .option(\"password\", password).load()\r\n",
 					"\r\n",
-					"tablaUsuarioPaisHoroscopo= tablaUsuariosHoroscopos.alias('uh') \\\r\n",
-					"    .join(tablaUsuarios.alias('u') \\\r\n",
-					"    .join(tablaPaises.alias('b')))\r\n",
+					"#tablaUsuarioPaisHoroscopo= tablaUsuariosHoroscopos.alias('uh').join(tablaUsuarios.alias('u').join(tablaPaises.alias('b')))\r\n",
 					"\r\n",
-					"tablaUsuarioPaisHoroscopo.show()\r\n",
+					"#tablaUsuarioPaisHoroscopo.show()\r\n",
 					"\r\n",
 					"\r\n",
-					"\r\n",
+					"######\r\n",
 					"#tablaUsuarioPaisHoroscopo.drop(\"Nombre\").drop(\"Continente\").drop(\"pais\").drop(\"registro\")\r\n",
+					"\r\n",
 					"tablaUsuarios.createOrReplaceTempView(\"tablaUsuarios\")\r\n",
 					"tablaPaises.createOrReplaceTempView(\"tablaPaises\")\r\n",
 					"tablaUsuariosHoroscopos.createOrReplaceTempView(\"tablaUsuariosHoroscopos\")\r\n",
 					"\r\n",
-					"tablaUsuarioPaisHoroscopo2 = spark.sql(\"select count(*) as users, p.nombre, uh.signo from tablaUsuariosHoroscopos uh inner join tablaUsuarios u on u.id = uh.idUsuario inner join tablaPaises p on u.pais = p.nombre group by p.nombre, uh.signo order by p.nombre \");\r\n",
-					"#tablaUsuarioPaisHoroscopo2 = spark.sql(\"select count(*) as users, p.nombre, uh.signo from tablaUsuarios u, tablaPaises p, tablaUsuariosHoroscopos uh where u.pais = p.nombre and u.id = uh.idUsuario and u.pais = p.nombre group by p.nombre, uh.signo order by p.nombre\");\r\n",
+					"#tablaUsuarioPaisHoroscopo2 = spark.sql(\"select count(*) as users, p.nombre, uh.signo from tablaUsuariosHoroscopos uh inner join tablaUsuarios u on u.id = uh.idUsuario inner join tablaPaises p on u.pais = p.nombre group by p.nombre, uh.signo order by p.nombre \");\r\n",
 					"\r\n",
+					"tablaUsuarioPaisHoroscopo2 = spark.sql(\"select count(*) as users, p.nombre, uh.signo from tablaUsuariosHoroscopos uh, tablaUsuarios u, tablaPaises p where uh.idUsuario = u.id and u.pais = p.nombre group by p.nombre, uh.signo order by p.nombre\")\r\n",
 					"#spark.sql(\"select count(*) as users, p.nombre, uh.signo from dbo.Usuarios u, dbo.paises p, dbo.UsuariosHoroscopos uh where u.pais = p.nombre and u.id = uh.idUsuario and u.pais = p.nombre group by p.nombre, uh.signo order by p.nombre\").show()\r\n",
 					"\r\n",
 					"tablaUsuarioPaisHoroscopo2.show()\r\n",
-					""
+					"##########\r\n",
+					"\r\n",
+					"\"\"\"\r\n",
+					"tablaUsuarioPaisHoroscopo.createOrReplaceTempView(\"tablaUsuarioPaisHoroscopo\")\r\n",
+					"tablaUsuarioPaisHoroscopo = spark.sql(\"select count(*) as users, nombre, signo from tablaUsuarioPaisHoroscopo group by nombre, signo order by nombre\")\r\n",
+					"tablaUsuarioPaisHoroscopo.show()\r\n",
+					"\"\"\""
 				],
-				"execution_count": 57
+				"execution_count": 8
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"#crear tabla UsuarioPaisHoroscopo\r\n",
+					"try:\r\n",
+					"\r\n",
+					"    tablaUsuarioPaisHoroscopo2.write \\\r\n",
+					"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+					"        .mode(\"overwrite\") \\\r\n",
+					"        .option(\"url\", url) \\\r\n",
+					"        .option(\"dbtable\", \"UsuarioPaisHoroscopo\") \\\r\n",
+					"        .option(\"user\", user) \\\r\n",
+					"        .option(\"password\", password) \\\r\n",
+					"        .save()\r\n",
+					"\r\n",
+					"except ValueError as error :\r\n",
+					"\r\n",
+					"    print(\"MSSQL Connector write failed\", error)\r\n",
+					"\r\n",
+					"\r\n",
+					"\r\n",
+					"print(\"MSSQL Connector write(overwrite) succeeded  \")"
+				],
+				"execution_count": 9
 			}
 		]
 	}
