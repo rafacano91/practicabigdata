@@ -1557,7 +1557,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "66f36bb1-29d8-425f-8bfe-37447eeee9f2"
+						"spark.autotune.trackingId": "82f7760e-0b0f-4692-abcb-7b0279b32c19"
 					}
 				},
 				"metadata": {
@@ -1611,7 +1611,7 @@
 							""
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 18
 					},
 					{
 						"cell_type": "code",
@@ -1918,6 +1918,111 @@
 						],
 						"outputs": [],
 						"execution_count": 16
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"\"\"\"\r\n",
+							"select top(1) count(*) as reproducciones, uc.nombreArtista, uh.signo\r\n",
+							"from dbo.UsuariosHoroscopos uh inner join dbo.Usuarios u on u.id = uh.idUsuario \r\n",
+							"    inner join dbo.UsuariosCanciones uc on u.id = uc.id\r\n",
+							"WHERE uh.signo = (select signo from dbo.HoroscopoMasUsado)\r\n",
+							"group by  uc.nombreArtista, uh.signo\r\n",
+							"order by reproducciones desc\r\n",
+							"--limit 1 en payspark en vez de top\r\n",
+							"\r\n",
+							"\"\"\"\r\n",
+							"tablaUsuarios = spark.read \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"Usuarios\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password).load()\r\n",
+							"\r\n",
+							"tablaUsuariosHoroscopos = spark.read \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"UsuariosHoroscopos\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password).load()\r\n",
+							"\r\n",
+							"tablaUsuariosCanciones = spark.read \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"UsuariosCanciones\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password).load()\r\n",
+							"\r\n",
+							"tablaHoroscopoMasUsado = spark.read \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"HoroscopoMasUsado\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password).load()\r\n",
+							"\r\n",
+							"\r\n",
+							"tablaUsuarios.createOrReplaceTempView(\"Usuarios\")\r\n",
+							"tablaUsuariosHoroscopos.createOrReplaceTempView(\"UsuariosHoroscopos\")\r\n",
+							"tablaUsuariosCanciones.createOrReplaceTempView(\"UsuariosCanciones\")\r\n",
+							"tablaHoroscopoMasUsado.createOrReplaceTempView(\"HoroscopoMasUsado\")\r\n",
+							"\r\n",
+							"tablaArtistaMasEscuchado = spark.sql(\"select count(*) as reproducciones, uc.nombreArtista, uh.signo from UsuariosHoroscopos uh inner join Usuarios u on u.id = uh.idUsuario inner join UsuariosCanciones uc on u.id = uc.id WHERE uh.signo = (select signo from HoroscopoMasUsado) group by  uc.nombreArtista, uh.signo order by reproducciones desc limit 1\")\r\n",
+							"\r\n",
+							"tablaArtistaMasEscuchado.show()\r\n",
+							"\r\n",
+							"\r\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 20
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"#crear tabla ArtistaMasEscuchado\r\n",
+							"try:\r\n",
+							"\r\n",
+							"    tablaArtistaMasEscuchado.write \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .mode(\"overwrite\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"ArtistaMasEscuchado\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password) \\\r\n",
+							"        .save()\r\n",
+							"\r\n",
+							"except ValueError as error :\r\n",
+							"\r\n",
+							"    print(\"MSSQL Connector write failed\", error)\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"print(\"MSSQL Connector write(overwrite) succeeded  \")"
+						],
+						"outputs": [],
+						"execution_count": 21
 					}
 				]
 			},
