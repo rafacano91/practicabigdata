@@ -13,7 +13,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "449a1856-6cd6-4da7-bf9a-048a7ca047a3"
+				"spark.autotune.trackingId": "4e3a0fbd-b21e-46c2-93cb-33d4e6e9f0e8"
 			}
 		},
 		"metadata": {
@@ -117,6 +117,72 @@
 					"mssparkutils.fs.ls('/')\r\n",
 					"mssparkutils.fs.mkdirs('hola')\r\n",
 					"mssparkutils.fs.head('brutos/userid-profile.tsv', 500)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"\"\"\" --cuál es el signo que tiene más usuarios a nivel mundial \r\n",
+					"select top(1) count(*) as users, uh.signo\r\n",
+					"from    dbo.UsuariosHoroscopos uh inner join dbo.Usuarios u on u.id = uh.idUsuario        \r\n",
+					"group by  uh.signo\r\n",
+					"order by users desc\r\n",
+					"\"\"\"\r\n",
+					"tablaUsuarios = spark.read \\\r\n",
+					"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+					"        .option(\"url\", url) \\\r\n",
+					"        .option(\"dbtable\", \"Usuarios\") \\\r\n",
+					"        .option(\"user\", user) \\\r\n",
+					"        .option(\"password\", password).load()\r\n",
+					"\r\n",
+					"tablaUsuariosHoroscopos = spark.read \\\r\n",
+					"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+					"        .option(\"url\", url) \\\r\n",
+					"        .option(\"dbtable\", \"UsuariosHoroscopos\") \\\r\n",
+					"        .option(\"user\", user) \\\r\n",
+					"        .option(\"password\", password).load()\r\n",
+					"\r\n",
+					"tablaUsuarios.createOrReplaceTempView(\"tablaUsuarios\")\r\n",
+					"tablaUsuariosHoroscopos.createOrReplaceTempView(\"tablaUsuariosHoroscopos\")\r\n",
+					"\r\n",
+					"tablaHoroscopoMasUsado = spark.sql(\"select count(*) as users, uh.signo from tablaUsuariosHoroscopos uh inner join tablaUsuarios u on u.id = uh.idUsuario group by uh.signo order by users desc limit 1\")\r\n",
+					"\r\n",
+					"tablaHoroscopoMasUsado.show()"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"\"\"\" FORMA CONSULTA DIFERENTE USUARIOS HOROSCOPOS PAISES \"\"\"\r\n",
+					"select count(*) as users, p.nombre, uh.signo\r\n",
+					"from    dbo.UsuariosHoroscopos uh inner join dbo.Usuarios u on u.id = uh.idUsuario\r\n",
+					"        inner join dbo.paises p on u.pais = p.nombre \r\n",
+					"group by p.nombre, uh.signo\r\n",
+					"order by p.nombre"
 				],
 				"execution_count": null
 			}
