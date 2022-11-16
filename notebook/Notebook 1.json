@@ -18,7 +18,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "8217eb64-65a8-4fde-bee2-ec4e8f3cd321"
+				"spark.autotune.trackingId": "3b5fae94-7d64-471b-8cc4-80241a13cfb2"
 			}
 		},
 		"metadata": {
@@ -51,13 +51,6 @@
 		"cells": [
 			{
 				"cell_type": "code",
-				"source": [
-					"spark.read.format(\"csv\").load(\"abfss://datalakegen2grupo11@f.campos.dfs.core.windows.net/userid-profile.tsv\").collect()"
-				],
-				"execution_count": 161
-			},
-			{
-				"cell_type": "code",
 				"metadata": {
 					"jupyter": {
 						"source_hidden": false,
@@ -77,6 +70,11 @@
 					"blob_container_name = 'datalakegen2grupo11' # replace with your container name\r\n",
 					"blob_relative_path = 'Your path' # replace with your relative folder path\r\n",
 					"linked_service_name = 'AzureBlobStorage1' # replace with your linked service name\r\n",
+					"servername = \"jdbc:sqlserver://practicabigdata.database.windows.net:1433\"\r\n",
+					"dbname = \"Practica\"\r\n",
+					"url = servername + \";\" + \"databaseName=\" + dbname + \";\"\r\n",
+					"user = \"practicabigdata\" \r\n",
+					"password = \"BigData123\"\r\n",
 					"\r\n",
 					"#abfss://datalakegen2grupo11@f.campos.dfs.core.windows.net/userid-profile.tsv\r\n",
 					"\r\n",
@@ -91,265 +89,7 @@
 					"\r\n",
 					""
 				],
-				"execution_count": null
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"spark.read.format(\"csv\").load(\"abfss://datalakegen2grupo11@r.cano.dfs.core.windows.net/userid-profile.tsv\").collect()\r\n",
-					""
-				],
-				"execution_count": null
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"mssparkutils.fs.ls('datalakegen2grupo11@r.cano.dfs.core.windows.net/')"
-				],
-				"execution_count": null
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					},
-					"microsoft": {
-						"language": "python"
-					}
-				},
-				"source": [
-					"%%pyspark\r\n",
-					"\r\n",
-					"df = spark.read.load('abfss://datalakegen2grupo11@r.cano.dfs.core.windows.net/datalakegen2grupo11/userid-profile.csv', format='csv')\r\n",
-					"display(df.limit(10))"
-				],
-				"execution_count": null
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"mssparkutils.fs.ls('hola')"
-				],
-				"execution_count": null
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"mssparkutils.fs.ls('/')"
-				],
-				"execution_count": null
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"mssparkutils.fs.mkdirs('hola')"
-				],
-				"execution_count": null
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"mssparkutils.fs.head('brutos/userid-profile.tsv', 500)"
-				],
-				"execution_count": null
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"COPY INTO Database1.usuarios\r\n",
-					"FROM 'https://datalakegen2grupo11.blob.core.windows.net/datalakegen2grupo11/user/trusted-service-user/brutos/userid-profile.tsv' [,...n]\r\n",
-					"WITH  \r\n",
-					"(\r\n",
-					"[FILE_TYPE = {'CSV'} ]\r\n",
-					"[,FILE_FORMAT = EXTERNAL FILE FORMAT OBJECT ]    \r\n",
-					"[,CREDENTIAL =(IDENTITY='Shared Access Signature', SECRET='sp=r&st=2022-11-10T15:26:31Z&se=2022-11-10T23:26:31Z&spr=https&sv=2021-06-08&sr=b&sig=gR9D7JYUKWnDvZqxedrCI3b6ND9tyhV4XYK0uW6eIaE%3D') ]\r\n",
-					"[,FIRSTROW = 2]\r\n",
-					"[,DATEFORMAT = 'date_format']\r\n",
-					"[,ENCODING = {'UTF8'}]"
-				],
-				"execution_count": null
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"create external data source brutos\r\n",
-					"with ( location = 'https://datalakegen2grupo11.blob.core.windows.net/datalakegen2grupo11/user/trusted-service-user/brutos' );\r\n",
-					"\r\n",
-					"select top 10 *\r\n",
-					"from openrowset(\r\n",
-					"        bulk 'userid-profile.tsv',\r\n",
-					"        data_source = 'brutos',\r\n",
-					"        format = 'csv',\r\n",
-					"        parser_version ='2.0',\r\n",
-					"        firstrow = 2\r\n",
-					"    ) as rows"
-				],
-				"execution_count": null
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"//scala\r\n",
-					"%%spark\r\n",
-					"//lectura de archivo tsv\r\n",
-					"val df = spark.read.option(\"delimiter\",\"\\t\").option(\"header\",\"true\").csv(\"brutos/userid-profile.tsv\")\r\n",
-					"//df.show\r\n",
-					"val specificColumnsDf = df.select(\"id\", \"gender\", \"age\", \"country\", \"registered\") \r\n",
-					"specificColumnsDf.show()\r\n",
-					"\r\n",
-					"\r\n",
-					"\r\n",
-					""
-				],
-				"execution_count": null
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					},
-					"microsoft": {
-						"language": "python"
-					}
-				},
-				"source": [
-					"%%pyspark\r\n",
-					"servername = \"jdbc:sqlserver://practicabigdata.database.windows.net:1433\"\r\n",
-					"dbname = \"Practica\"\r\n",
-					"url = servername + \";\" + \"databaseName=\" + dbname + \";\"\r\n",
-					"dbtable = \"userid_profile\"\r\n",
-					"user = \"practicabigdata\" \r\n",
-					"password = \"BigData123\"\r\n",
-					"\r\n",
-					"try:\r\n",
-					"  df = spark.read.option(\"delimiter\",\"\\t\").option(\"header\",\"true\").csv(\"brutos/userid-profile.tsv\")\r\n",
-					"  df.write \\\r\n",
-					"    .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
-					"    .mode(\"overwrite\") \\\r\n",
-					"    .option(\"url\", url) \\\r\n",
-					"    .option(\"dbtable\", dbtable) \\\r\n",
-					"    .option(\"user\", user) \\\r\n",
-					"    .option(\"password\", password) \\\r\n",
-					"    .save()\r\n",
-					"except ValueError as error :\r\n",
-					"    print(\"MSSQL Connector write failed\", error)\r\n",
-					"\r\n",
-					"print(\"MSSQL Connector write(overwrite) succeeded  \")"
-				],
-				"execution_count": null
+				"execution_count": 2
 			},
 			{
 				"cell_type": "code",
@@ -376,12 +116,7 @@
 					"df = spark.read.option(\"delimiter\",\"\\t\").option(\"header\",\"true\").csv(\"brutos/userid-profile.tsv\")\r\n",
 					"df = df.drop(\"gender\").drop(\"age\").withColumnRenamed(\"country\",\"pais\").withColumnRenamed(\"registered\",\"registro\")\r\n",
 					"\r\n",
-					"servername = \"jdbc:sqlserver://practicabigdata.database.windows.net:1433\"\r\n",
-					"dbname = \"Practica\"\r\n",
-					"url = servername + \";\" + \"databaseName=\" + dbname + \";\"\r\n",
 					"dbtable = \"Usuarios\"\r\n",
-					"user = \"practicabigdata\" \r\n",
-					"password = \"BigData123\"\r\n",
 					"\r\n",
 					"try:\r\n",
 					"  df.write \\\r\n",
@@ -466,44 +201,10 @@
 					}
 				},
 				"source": [
-					"from pyspark.sql.functions import split\r\n",
-					"tablaHoroscopos = spark.read \\\r\n",
-					"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
-					"        .option(\"url\", url) \\\r\n",
-					"        .option(\"dbtable\", \"horoscopos\") \\\r\n",
-					"        .option(\"user\", user) \\\r\n",
-					"        .option(\"password\", password).load()\r\n",
-					"tablaHoroscopos = tablaHoroscopos.withColumn(\"Desde\", split(tablaHoroscopos['Fecha_rango'], \" - \").getItem(0)).withColumn(\"Hasta\", split(tablaHoroscopos['Fecha_rango'], \" - \").getItem(1))\r\n",
-					"tablaHoroscopos = tablaHoroscopos.filter(to_date(data(\"Desde\").lt(\"Aug 13, 2006\"))).show()   \r\n",
-					"\r\n",
-					"data(\"Desde\").between(\"2015-07-05\", \"2015-09-02\")"
-				],
-				"execution_count": null
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
+					"\"\"\"Modificacion y almancenamiento tablas: horoscopos, usuarios y paises para manejo en spark\"\"\"\r\n",
 					"from datetime import datetime\r\n",
 					"from pyspark.sql.types import StructType,StructField, StringType, IntegerType\r\n",
 					"from pyspark.sql.functions import *\r\n",
-					"\r\n",
-					"servername = \"jdbc:sqlserver://practicabigdata.database.windows.net:1433\"\r\n",
-					"dbname = \"Practica\"\r\n",
-					"url = servername + \";\" + \"databaseName=\" + dbname + \";\"\r\n",
-					"user = \"practicabigdata\" \r\n",
-					"password = \"BigData123\"\r\n",
-					"\r\n",
 					"\r\n",
 					"tablaUsuarios = spark.read \\\r\n",
 					"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
@@ -554,7 +255,7 @@
 					"\r\n",
 					"schema = StructType([\r\n",
 					"   StructField(\"idUsuario\", StringType(), True),\r\n",
-					"   StructField(\"idHoroscopo\", StringType(), True)])\r\n",
+					"   StructField(\"Signo\", StringType(), True)])\r\n",
 					"\r\n",
 					"usuariosHoroscopos = spark.createDataFrame(emptyRDD, schema)\r\n",
 					"\r\n",
@@ -570,7 +271,6 @@
 					"            desde = horos[\"Desde\"]\r\n",
 					"            hasta =  horos[\"Hasta\"]\r\n",
 					"            signo = horos[\"Signo\"]\r\n",
-					"            idHoroscopo = horos[\"ID\"]\r\n",
 					"\r\n",
 					"            desde = desde + \" 2022\"\r\n",
 					"            hasta = hasta + \" 2022\"\r\n",
@@ -593,14 +293,14 @@
 					"                print (hasta)\r\n",
 					"                print(\" por tanto es \"+signo)\r\n",
 					"\r\n",
-					"                newRow = spark.createDataFrame([(idUsuario,idHoroscopo)], [\"idUsuario\",\"idHoroscopo\"])\r\n",
+					"                newRow = spark.createDataFrame([(idUsuario,signo)], [\"idUsuario\",\"Signo\"])\r\n",
 					"                usuariosHoroscopos = usuariosHoroscopos.union(newRow)\r\n",
 					"                print (\"\\n\")\r\n",
 					"                break;    \r\n",
 					"        else:\r\n",
 					"            print (\"El usuario \" + idUsuario + \" no tiene fecha de registró por tanto es None\")\r\n",
 					"            print (\"\\n\")\r\n",
-					"            newRow = spark.createDataFrame([(idUsuario,\"NULL\")], [\"idUsuario\",\"idHoroscopo\"])\r\n",
+					"            newRow = spark.createDataFrame([(idUsuario,\"NoSigno\")], [\"idUsuario\",\"Signo\"])\r\n",
 					"            usuariosHoroscopos = usuariosHoroscopos.union(newRow)\r\n",
 					"            break;\r\n",
 					"\r\n",
@@ -635,90 +335,7 @@
 					}
 				},
 				"source": [
-					"\"\"\"Creacion tabla ArtistaHoroscopo\"\"\"\r\n",
-					"emptyRDD = spark.sparkContext.emptyRDD()\r\n",
-					"\r\n",
-					"schema = StructType([\r\n",
-					"    StructField(\"idArtista\", StringType(), True),\r\n",
-					"    StructField(\"idHoroscopo\", StringType(), True),\r\n",
-					"    StructField(\"numEscuchas\", StringType(), True)])\r\n",
-					"\r\n",
-					"ArtistaHoroscopo = spark.createDataFrame(emptyRDD, schema)\r\n",
-					"\r\n",
-					"tablaUsuariosCanciones = spark.read \\\r\n",
-					"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
-					"        .option(\"url\", url) \\\r\n",
-					"        .option(\"dbtable\", \"UsuariosCanciones\") \\\r\n",
-					"        .option(\"user\", user) \\\r\n",
-					"        .option(\"password\", password).load()\r\n",
-					"\r\n",
-					"tablaUsuariosCanciones = tablaUsuariosCanciones.join(tablaHoroscopos,tablaUsuariosCanciones.id == tablaHoroscopos.idUsuario,\"inner\")\r\n",
-					"tablaUsuariosCanciones.show(truncate=False)\r\n",
-					"\r\n",
-					"tablaHoroscopos = tablaHoroscopos.withColumn(\"Desde\", split(tablaHoroscopos['Fecha_rango'], \" - \").getItem(0)).withColumn(\"Hasta\", split(tablaHoroscopos['Fecha_rango'], \" - \").getItem(1))\r\n",
-					"\r\n",
-					"tablUsuarios = tablaUsuarios.drop(\"Nombre\").drop(\"Continente\").drop(\"pais\").drop(\"registro\")\r\n",
-					"\r\n",
-					"\"\"\"\r\n",
-					"for users in tablaUsuarios.collect():\r\n",
-					"    idUsuario = users[\"id\"]\r\n",
-					"    for horos in tablaHoroscopos.collect():\r\n",
-					"        registro = users[\"registro\"]\r\n",
-					"        if registro is not None:\r\n",
-					"            registro = registro.split(',')[0]\r\n",
-					"            registro = registro + \" 2022\"\r\n",
-					"            registro = datetime.strptime(registro, \"%b %d %Y\")\r\n",
-					"\r\n",
-					"            desde = horos[\"Desde\"]\r\n",
-					"            hasta =  horos[\"Hasta\"]\r\n",
-					"            signo = horos[\"Signo\"]\r\n",
-					"            idContinente = horos[\"ID\"]\r\n",
-					"\r\n",
-					"            desde = desde + \" 2022\"\r\n",
-					"            hasta = hasta + \" 2022\"\r\n",
-					"\r\n",
-					"            desde = datetime.strptime(desde, \"%b %d %Y\")\r\n",
-					"            hasta = datetime.strptime(hasta, \"%b %d %Y\")\r\n",
-					"\r\n",
-					"            if signo == \"capricorn\":\r\n",
-					"                desde = datetime.strptime(horos[\"Desde\"] + \" 2021\", \"%b %d %Y\")\r\n",
-					"                if registro >= datetime.strptime(\"2022-12-22\", \"%Y-%M-%d\"):\r\n",
-					"                    registro = users[\"registro\"]\r\n",
-					"                    registro = registro.split(',')[0]\r\n",
-					"                    registro = datetime.strptime(registro + \" 2021\", \"%b %d %Y\")\r\n",
-					"     \r\n",
-					"            if desde <= registro <= hasta:\r\n",
-					"                print (\"El usuario \"+idUsuario+\" con fecha de registró\")\r\n",
-					"                print (registro)\r\n",
-					"                print(\" está entre \")\r\n",
-					"                print (desde)\r\n",
-					"                print (hasta)\r\n",
-					"                print(\" por tanto es \"+signo)\r\n",
-					"\r\n",
-					"                newRow = spark.createDataFrame([(idUsuario,idHoroscopo)], [\"idUsuario\",\"idHoroscopo\"])\r\n",
-					"                usuariosHoroscopos = usuariosHoroscopos.union(newRow)\r\n",
-					"                print (\"\\n\")\r\n",
-					"                break;    \r\n",
-					"        else:\r\n",
-					"            print (\"El usuario \" + idUsuario + \" no tiene fecha de registró por tanto es None\")\r\n",
-					"            print (\"\\n\")\r\n",
-					"            newRow = spark.createDataFrame([(idUsuario,\"NULL\")], [\"idUsuario\",\"idHoroscopo\"])\r\n",
-					"            usuariosHoroscopos = usuariosHoroscopos.union(newRow)\r\n",
-					"            break;\r\n",
-					"\r\n",
-					"try:\r\n",
-					"    usuariosHoroscopos.write \\\r\n",
-					"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
-					"        .mode(\"overwrite\") \\\r\n",
-					"        .option(\"url\", url) \\\r\n",
-					"        .option(\"dbtable\", \"UsuariosHoroscopos\") \\\r\n",
-					"        .option(\"user\", user) \\\r\n",
-					"        .option(\"password\", password) \\\r\n",
-					"        .save()\r\n",
-					"except ValueError as error :\r\n",
-					"    print(\"MSSQL Connector write failed\", error)\r\n",
-					"\r\n",
-					"print(\"MSSQL Connector write(overwrite) succeeded  \")\"\"\""
+					""
 				],
 				"execution_count": null
 			}

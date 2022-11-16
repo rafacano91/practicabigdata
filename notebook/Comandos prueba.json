@@ -1,0 +1,125 @@
+{
+	"name": "Comandos prueba",
+	"properties": {
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 2,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "2",
+				"spark.dynamicAllocation.maxExecutors": "2",
+				"spark.autotune.trackingId": "449a1856-6cd6-4da7-bf9a-048a7ca047a3"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "python"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"//scala\r\n",
+					"%%spark\r\n",
+					"//lectura de archivo tsv\r\n",
+					"val df = spark.read.option(\"delimiter\",\"\\t\").option(\"header\",\"true\").csv(\"brutos/userid-profile.tsv\")\r\n",
+					"//df.show\r\n",
+					"val specificColumnsDf = df.select(\"id\", \"gender\", \"age\", \"country\", \"registered\") \r\n",
+					"specificColumnsDf.show()\r\n",
+					"\r\n",
+					""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"create external data source brutos\r\n",
+					"with ( location = 'https://datalakegen2grupo11.blob.core.windows.net/datalakegen2grupo11/user/trusted-service-user/brutos' );\r\n",
+					"\r\n",
+					"select top 10 *\r\n",
+					"from openrowset(\r\n",
+					"        bulk 'userid-profile.tsv',\r\n",
+					"        data_source = 'brutos',\r\n",
+					"        format = 'csv',\r\n",
+					"        parser_version ='2.0',\r\n",
+					"        firstrow = 2\r\n",
+					"    ) as rows"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"COPY INTO Database1.usuarios\r\n",
+					"FROM 'https://datalakegen2grupo11.blob.core.windows.net/datalakegen2grupo11/user/trusted-service-user/brutos/userid-profile.tsv' [,...n]\r\n",
+					"WITH  \r\n",
+					"(\r\n",
+					"[FILE_TYPE = {'CSV'} ]\r\n",
+					"[,FILE_FORMAT = EXTERNAL FILE FORMAT OBJECT ]    \r\n",
+					"[,CREDENTIAL =(IDENTITY='Shared Access Signature', SECRET='sp=r&st=2022-11-10T15:26:31Z&se=2022-11-10T23:26:31Z&spr=https&sv=2021-06-08&sr=b&sig=gR9D7JYUKWnDvZqxedrCI3b6ND9tyhV4XYK0uW6eIaE%3D') ]\r\n",
+					"[,FIRSTROW = 2]\r\n",
+					"[,DATEFORMAT = 'date_format']\r\n",
+					"[,ENCODING = {'UTF8'}]"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"mssparkutils.fs.ls('hola')\r\n",
+					"mssparkutils.fs.ls('/')\r\n",
+					"mssparkutils.fs.mkdirs('hola')\r\n",
+					"mssparkutils.fs.head('brutos/userid-profile.tsv', 500)"
+				],
+				"execution_count": null
+			}
+		]
+	}
+}
