@@ -1557,7 +1557,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "cf7f8cab-720d-4090-8027-8dcf1982cf19"
+						"spark.autotune.trackingId": "abda50b9-e83a-44a4-bdeb-ccf2412bb762"
 					}
 				},
 				"metadata": {
@@ -1598,6 +1598,16 @@
 							"\r\n",
 							"#from pyspark.sql.functions import col\r\n",
 							"import pyspark.sql.functions as F\r\n",
+							"\r\n",
+							"servername = \"jdbc:sqlserver://practicabigdata.database.windows.net:1433\"\r\n",
+							"\r\n",
+							"dbname = \"Practica\"\r\n",
+							"\r\n",
+							"url = servername + \";\" + \"databaseName=\" + dbname + \";\"\r\n",
+							"\r\n",
+							"user = \"practicabigdata\" \r\n",
+							"\r\n",
+							"password = \"BigData123\"\r\n",
 							""
 						],
 						"outputs": [],
@@ -1617,22 +1627,6 @@
 							}
 						},
 						"source": [
-							"\r\n",
-							"\r\n",
-							"\r\n",
-							"servername = \"jdbc:sqlserver://practicabigdata.database.windows.net:1433\"\r\n",
-							"\r\n",
-							"dbname = \"Practica\"\r\n",
-							"\r\n",
-							"url = servername + \";\" + \"databaseName=\" + dbname + \";\"\r\n",
-							"\r\n",
-							"user = \"practicabigdata\" \r\n",
-							"\r\n",
-							"password = \"BigData123\"\r\n",
-							"\r\n",
-							"\r\n",
-							"\r\n",
-							"\r\n",
 							"tablaUsuarios = spark.read \\\r\n",
 							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
 							"        .option(\"url\", url) \\\r\n",
@@ -1863,6 +1857,8 @@
 							"group by  uh.signo\r\n",
 							"order by users desc\r\n",
 							"\"\"\"\r\n",
+							"\r\n",
+							"\r\n",
 							"\r\n",
 							""
 						],
