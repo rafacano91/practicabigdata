@@ -18,7 +18,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "a4fd4ad5-ff8b-4d65-b4b3-f84a7ec8dd57"
+				"spark.autotune.trackingId": "295f62ae-a759-4faf-9a53-9fa4a21eb5cc"
 			}
 		},
 		"metadata": {
@@ -76,8 +76,6 @@
 					"user = \"practicabigdata\" \r\n",
 					"password = \"BigData123\"\r\n",
 					"\r\n",
-					"#abfss://datalakegen2grupo11@f.campos.dfs.core.windows.net/userid-profile.tsv\r\n",
-					"\r\n",
 					"blob_sas_token = mssparkutils.credentials.getConnectionStringOrCreds(linked_service_name)\r\n",
 					"\r\n",
 					"# Allow SPARK to access from Blob remotely\r\n",
@@ -89,7 +87,64 @@
 					"\r\n",
 					""
 				],
-				"execution_count": 2
+				"execution_count": 4
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"\"\"\"configuracion de tabla maestra horoscopos csv\"\"\"\r\n",
+					"df = spark.read.option(\"delimiter\",\";\").option(\"header\",\"true\").csv(\"brutos/Horoscopos.csv\")\r\n",
+					"dbtable = \"horoscopos\"\r\n",
+					"\r\n",
+					"try:\r\n",
+					"  df.write \\\r\n",
+					"    .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+					"    .mode(\"overwrite\") \\\r\n",
+					"    .option(\"url\", url) \\\r\n",
+					"    .option(\"dbtable\", dbtable) \\\r\n",
+					"    .option(\"user\", user) \\\r\n",
+					"    .option(\"password\", password) \\\r\n",
+					"    .save()\r\n",
+					"except ValueError as error :\r\n",
+					"    print(\"MSSQL Connector write failed\", error)\r\n",
+					"\r\n",
+					"print(\"MSSQL Connector write(overwrite) succeeded  \")\r\n",
+					"\r\n",
+					"\r\n",
+					"\"\"\"configuracion de tabla maestra paises csv\"\"\"\r\n",
+					"df = spark.read.option(\"delimiter\",\";\").option(\"header\",\"true\").csv(\"brutos/PaisContinente.csv\")\r\n",
+					"dbtable = \"paises\"\r\n",
+					"\r\n",
+					"try:\r\n",
+					"  df.write \\\r\n",
+					"    .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+					"    .mode(\"overwrite\") \\\r\n",
+					"    .option(\"url\", url) \\\r\n",
+					"    .option(\"dbtable\", dbtable) \\\r\n",
+					"    .option(\"user\", user) \\\r\n",
+					"    .option(\"password\", password) \\\r\n",
+					"    .save()\r\n",
+					"except ValueError as error :\r\n",
+					"    print(\"MSSQL Connector write failed\", error)\r\n",
+					"\r\n",
+					"print(\"MSSQL Connector write(overwrite) succeeded  \")"
+				],
+				"execution_count": 15
 			},
 			{
 				"cell_type": "code",
@@ -133,7 +188,7 @@
 					"print(\"MSSQL Connector write(overwrite) succeeded  \")\r\n",
 					""
 				],
-				"execution_count": null
+				"execution_count": 6
 			},
 			{
 				"cell_type": "code",
@@ -185,7 +240,7 @@
 					"print(\"MSSQL Connector write(overwrite) succeeded  \")\r\n",
 					""
 				],
-				"execution_count": null
+				"execution_count": 7
 			},
 			{
 				"cell_type": "code",
@@ -234,7 +289,7 @@
 					"tablaPaises.show()\r\n",
 					""
 				],
-				"execution_count": null
+				"execution_count": 16
 			},
 			{
 				"cell_type": "code",
@@ -322,7 +377,7 @@
 					"print(\"MSSQL Connector write(overwrite) succeeded  \")\r\n",
 					""
 				],
-				"execution_count": 9
+				"execution_count": 17
 			},
 			{
 				"cell_type": "code",
@@ -370,7 +425,7 @@
 					"tablaUsuarios = tablaUsuarios.withColumnRenamed(\"id\",\"idUsuario\")\r\n",
 					"tablaPaises = tablaPaises.withColumnRenamed(\"ID\",\"idPaisContinente\")\r\n",
 					"\r\n",
-					"tablaUsuarios= tablaUsuarios.alias('a').join(tablaPaises.alias('b'),F.expr(\"a.pais like concat('%',b.nombre,'%') or b.nombre like concat('%',a.pais,'%')\"),\"left\")\r\n",
+					"tablaUsuarios= tablaUsuarios.alias('a').join(tablaPaises.alias('b'),expr(\"a.pais like concat('%',b.nombre,'%') or b.nombre like concat('%',a.pais,'%')\"),\"left\")\r\n",
 					"tablaUsuarios.show()\r\n",
 					"tablaUsuarioPaisContinente = tablaUsuarios.drop(\"Nombre\").drop(\"Continente\").drop(\"pais\").drop(\"registro\")\r\n",
 					"\r\n",
@@ -395,7 +450,7 @@
 					"\r\n",
 					"print(\"MSSQL Connector write(overwrite) succeeded  \")"
 				],
-				"execution_count": null
+				"execution_count": 18
 			},
 			{
 				"cell_type": "code",
@@ -475,7 +530,7 @@
 					"\r\n",
 					"print(\"MSSQL Connector write(overwrite) succeeded  \")"
 				],
-				"execution_count": null
+				"execution_count": 19
 			},
 			{
 				"cell_type": "code",
@@ -552,7 +607,7 @@
 					"\r\n",
 					"print(\"MSSQL Connector write(overwrite) succeeded  \")"
 				],
-				"execution_count": null
+				"execution_count": 20
 			},
 			{
 				"cell_type": "code",
@@ -634,16 +689,7 @@
 					"\r\n",
 					"\r\n",
 					"try:\r\n",
-					"\r\n",
-					"    tablaReproPaisContinente.write \\\r\n",
-					"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
-					"        .mode(\"overwrite\") \\\r\n",
-					"        .option(\"url\", url) \\\r\n",
-					"        .option(\"dbtable\", \"ReproPaisContinente\") \\\r\n",
-					"        .option(\"user\", user) \\\r\n",
-					"        .option(\"password\", password) \\\r\n",
-					"        .save()\r\n",
-					"    \r\n",
+					"        \r\n",
 					"    tablaReproContinente.write \\\r\n",
 					"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
 					"        .mode(\"overwrite\") \\\r\n",
@@ -669,7 +715,7 @@
 					"\r\n",
 					"print(\"MSSQL Connector write(overwrite) succeeded  \")"
 				],
-				"execution_count": null
+				"execution_count": 21
 			}
 		]
 	}
