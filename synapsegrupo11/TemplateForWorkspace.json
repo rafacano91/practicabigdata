@@ -1557,7 +1557,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "abda50b9-e83a-44a4-bdeb-ccf2412bb762"
+						"spark.autotune.trackingId": "66f36bb1-29d8-425f-8bfe-37447eeee9f2"
 					}
 				},
 				"metadata": {
@@ -1857,13 +1857,67 @@
 							"group by  uh.signo\r\n",
 							"order by users desc\r\n",
 							"\"\"\"\r\n",
+							"tablaUsuarios = spark.read \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"Usuarios\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password).load()\r\n",
+							"\r\n",
+							"tablaUsuariosHoroscopos = spark.read \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"UsuariosHoroscopos\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password).load()\r\n",
 							"\r\n",
 							"\r\n",
+							"tablaUsuarios.createOrReplaceTempView(\"tablaUsuarios\")\r\n",
+							"tablaUsuariosHoroscopos.createOrReplaceTempView(\"tablaUsuariosHoroscopos\")\r\n",
 							"\r\n",
-							""
+							"tablaHoroscopoMasUsado = spark.sql(\"select count(*) as users, uh.signo from tablaUsuariosHoroscopos uh inner join tablaUsuarios u on u.id = uh.idUsuario group by uh.signo order by users desc limit 1\")\r\n",
+							"\r\n",
+							"tablaHoroscopoMasUsado.show()"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 15
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"#crear tabla HoroscopoMasUsado\r\n",
+							"try:\r\n",
+							"\r\n",
+							"    tablaHoroscopoMasUsado.write \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .mode(\"overwrite\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"HoroscopoMasUsado\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password) \\\r\n",
+							"        .save()\r\n",
+							"\r\n",
+							"except ValueError as error :\r\n",
+							"\r\n",
+							"    print(\"MSSQL Connector write failed\", error)\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"print(\"MSSQL Connector write(overwrite) succeeded  \")"
+						],
+						"outputs": [],
+						"execution_count": 16
 					}
 				]
 			},
