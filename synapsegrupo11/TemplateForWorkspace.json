@@ -46,15 +46,6 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/spark11')]",
-			"type": "Microsoft.Synapse/workspaces/bigDataPools",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"annotations": []
-			},
-			"dependsOn": []
-		},
-		{
 			"name": "[concat(parameters('workspaceName'), '/CopiaUsuariosTSV')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
@@ -909,7 +900,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "7e9cb4af-2200-45f9-a631-12ef6e6f8e27"
+						"spark.autotune.trackingId": "8217eb64-65a8-4fde-bee2-ec4e8f3cd321"
 					}
 				},
 				"metadata": {
@@ -934,15 +925,13 @@
 						"sparkVersion": "3.2",
 						"nodeCount": 10,
 						"cores": 4,
-						"memory": 28,
-						"automaticScaleJobs": false
+						"memory": 28
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
-						"metadata": {},
 						"source": [
 							"spark.read.format(\"csv\").load(\"abfss://datalakegen2grupo11@f.campos.dfs.core.windows.net/userid-profile.tsv\").collect()"
 						],
@@ -1658,7 +1647,7 @@
 						"spark.dynamicAllocation.enabled": "false",
 						"spark.dynamicAllocation.minExecutors": "2",
 						"spark.dynamicAllocation.maxExecutors": "2",
-						"spark.autotune.trackingId": "d54d5b75-8e92-433e-9bae-a0e1ac62ecfa"
+						"spark.autotune.trackingId": "5d8eb877-9ffa-4781-a5fd-ddce4e06a7b5"
 					}
 				},
 				"metadata": {
@@ -1683,25 +1672,529 @@
 						"sparkVersion": "3.2",
 						"nodeCount": 10,
 						"cores": 4,
-						"memory": 28
+						"memory": 28,
+						"automaticScaleJobs": false
 					},
 					"sessionKeepAliveTimeout": 30
 				},
 				"cells": [
 					{
 						"cell_type": "code",
+						"metadata": {},
+						"source": [
+							"from datetime import datetime\r\n",
+							"\r\n",
+							"from pyspark.sql.types import StructType,StructField, StringType, IntegerType\r\n",
+							"\r\n",
+							"#from pyspark.sql.functions import col\r\n",
+							"import pyspark.sql.functions as F\r\n",
+							"\r\n",
+							"servername = \"jdbc:sqlserver://practicabigdata.database.windows.net:1433\"\r\n",
+							"\r\n",
+							"dbname = \"Practica\"\r\n",
+							"\r\n",
+							"url = servername + \";\" + \"databaseName=\" + dbname + \";\"\r\n",
+							"\r\n",
+							"user = \"practicabigdata\" \r\n",
+							"\r\n",
+							"password = \"BigData123\"\r\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 1
+					},
+					{
+						"cell_type": "code",
 						"metadata": {
-							"microsoft": {
-								"language": "python"
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
 							}
 						},
 						"source": [
-							"%%pyspark\r\n",
-							"df = spark.read.load('abfss://datalakegen2grupo11@datalakegen2grupo11.dfs.core.windows.net/user/trusted-service-user/brutos/userid-profile.tsv', format='csv', delimiter ='\\t'\r\n",
-							"## If header exists uncomment line below\r\n",
-							", header=True\r\n",
-							")\r\n",
-							"df.write.mode(\"overwrite\").saveAsTable(\"Database1.test01\")"
+							"tablaUsuarios = spark.read \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"Usuarios\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password).load()\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"tablaHoroscopos = spark.read \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"horoscopos\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password).load()\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"tablaPaises = spark.read \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"paises\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password).load()\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"tablaUsuarios.show()\r\n",
+							"\r\n",
+							"tablaHoroscopos.show()\r\n",
+							"\r\n",
+							"tablaPaises.show()\r\n",
+							"\r\n",
+							"tablaUsuarios = tablaUsuarios.withColumnRenamed(\"id\",\"idUsuario\")\r\n",
+							"tablaPaises = tablaPaises.withColumnRenamed(\"ID\",\"idPaisContinente\")\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"tablaUsuarios= tablaUsuarios.alias('a').join(tablaPaises.alias('b'),F.expr(\"a.pais like concat('%',b.nombre,'%') or b.nombre like concat('%',a.pais,'%')\"),\"left\")\r\n",
+							"#tablaUsuarios= tablaUsuarios.alias('a').join(tablaPaises.alias('b'),F.expr(\"b.nombre like concat('%',a.pais,'%')\"),\"left\")\r\n",
+							"tablaUsuarios.show()\r\n",
+							"tablaUsuarios = tablaUsuarios.drop(\"Nombre\").drop(\"Continente\").drop(\"pais\").drop(\"registro\")\r\n",
+							"\r\n",
+							"tablaUsuarios.show()"
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"#crear tabla UsuarioPaisContinente\r\n",
+							"try:\r\n",
+							"\r\n",
+							"    tablaUsuarios.write \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .mode(\"overwrite\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"UsuarioPaisContinente\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password) \\\r\n",
+							"        .save()\r\n",
+							"\r\n",
+							"except ValueError as error :\r\n",
+							"\r\n",
+							"    print(\"MSSQL Connector write failed\", error)\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"print(\"MSSQL Connector write(overwrite) succeeded  \")"
+						],
+						"outputs": [],
+						"execution_count": 36
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"\"\"\" --Se necesita saber cuántos usuarios por país pertenecen a cada signo del horóscopo\r\n",
+							"select count(*) as users, p.nombre, uh.signo\r\n",
+							"from Usuarios u, dbo.paises p, dbo.UsuariosHoroscopos uh\r\n",
+							"where \tu.pais = p.nombre \r\n",
+							"\t\tand u.id = uh.idUsuario\r\n",
+							"\t\tand u.pais = p.nombre\r\n",
+							"group by p.nombre, uh.signo\r\n",
+							"order by p.nombre\r\n",
+							"; \r\n",
+							"\r\n",
+							"select count(*) as users, p.nombre, uh.signo\r\n",
+							"from    dbo.UsuariosHoroscopos uh inner join dbo.Usuarios u on u.id = uh.idUsuario\r\n",
+							"        inner join dbo.paises p on u.pais = p.nombre \r\n",
+							"group by p.nombre, uh.signo\r\n",
+							"order by p.nombre\r\n",
+							"\r\n",
+							"\"\"\"\r\n",
+							"from pyspark.sql import SparkSession\r\n",
+							"\r\n",
+							"tablaUsuarios = spark.read \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"Usuarios\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password).load()\r\n",
+							"\r\n",
+							"tablaPaises = spark.read \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"paises\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password).load()\r\n",
+							"\r\n",
+							"tablaUsuariosHoroscopos = spark.read \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"UsuariosHoroscopos\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password).load()\r\n",
+							"\r\n",
+							"#tablaUsuarioPaisHoroscopo= tablaUsuariosHoroscopos.alias('uh').join(tablaUsuarios.alias('u').join(tablaPaises.alias('b')))\r\n",
+							"\r\n",
+							"#tablaUsuarioPaisHoroscopo.show()\r\n",
+							"\r\n",
+							"\r\n",
+							"######\r\n",
+							"#tablaUsuarioPaisHoroscopo.drop(\"Nombre\").drop(\"Continente\").drop(\"pais\").drop(\"registro\")\r\n",
+							"\r\n",
+							"tablaUsuarios.createOrReplaceTempView(\"tablaUsuarios\")\r\n",
+							"tablaPaises.createOrReplaceTempView(\"tablaPaises\")\r\n",
+							"tablaUsuariosHoroscopos.createOrReplaceTempView(\"tablaUsuariosHoroscopos\")\r\n",
+							"\r\n",
+							"#tablaUsuarioPaisHoroscopo2 = spark.sql(\"select count(*) as users, p.nombre, uh.signo from tablaUsuariosHoroscopos uh inner join tablaUsuarios u on u.id = uh.idUsuario inner join tablaPaises p on u.pais = p.nombre group by p.nombre, uh.signo order by p.nombre \");\r\n",
+							"\r\n",
+							"tablaUsuarioPaisHoroscopo2 = spark.sql(\"select count(*) as users, p.nombre, uh.signo from tablaUsuariosHoroscopos uh, tablaUsuarios u, tablaPaises p where uh.idUsuario = u.id and u.pais = p.nombre group by p.nombre, uh.signo order by p.nombre\")\r\n",
+							"#spark.sql(\"select count(*) as users, p.nombre, uh.signo from dbo.Usuarios u, dbo.paises p, dbo.UsuariosHoroscopos uh where u.pais = p.nombre and u.id = uh.idUsuario and u.pais = p.nombre group by p.nombre, uh.signo order by p.nombre\").show()\r\n",
+							"\r\n",
+							"tablaUsuarioPaisHoroscopo2.show()\r\n",
+							"##########\r\n",
+							"\r\n",
+							"\"\"\"\r\n",
+							"tablaUsuarioPaisHoroscopo.createOrReplaceTempView(\"tablaUsuarioPaisHoroscopo\")\r\n",
+							"tablaUsuarioPaisHoroscopo = spark.sql(\"select count(*) as users, nombre, signo from tablaUsuarioPaisHoroscopo group by nombre, signo order by nombre\")\r\n",
+							"tablaUsuarioPaisHoroscopo.show()\r\n",
+							"\"\"\""
+						],
+						"outputs": [],
+						"execution_count": 8
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"#crear tabla UsuarioPaisHoroscopo\r\n",
+							"try:\r\n",
+							"\r\n",
+							"    tablaUsuarioPaisHoroscopo2.write \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .mode(\"overwrite\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"UsuarioPaisHoroscopo\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password) \\\r\n",
+							"        .save()\r\n",
+							"\r\n",
+							"except ValueError as error :\r\n",
+							"\r\n",
+							"    print(\"MSSQL Connector write failed\", error)\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"print(\"MSSQL Connector write(overwrite) succeeded  \")"
+						],
+						"outputs": [],
+						"execution_count": 9
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"\"\"\" --cuál es el signo que tiene más usuarios a nivel mundial \r\n",
+							"select top(1) count(*) as users, uh.signo\r\n",
+							"from    dbo.UsuariosHoroscopos uh inner join dbo.Usuarios u on u.id = uh.idUsuario        \r\n",
+							"group by  uh.signo\r\n",
+							"order by users desc\r\n",
+							"\"\"\"\r\n",
+							"tablaUsuarios = spark.read \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"Usuarios\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password).load()\r\n",
+							"\r\n",
+							"tablaUsuariosHoroscopos = spark.read \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"UsuariosHoroscopos\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password).load()\r\n",
+							"\r\n",
+							"\r\n",
+							"tablaUsuarios.createOrReplaceTempView(\"tablaUsuarios\")\r\n",
+							"tablaUsuariosHoroscopos.createOrReplaceTempView(\"tablaUsuariosHoroscopos\")\r\n",
+							"\r\n",
+							"tablaHoroscopoMasUsado = spark.sql(\"select count(*) as users, uh.signo from tablaUsuariosHoroscopos uh inner join tablaUsuarios u on u.id = uh.idUsuario group by uh.signo order by users desc limit 1\")\r\n",
+							"\r\n",
+							"tablaHoroscopoMasUsado.show()"
+						],
+						"outputs": [],
+						"execution_count": 15
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"#crear tabla HoroscopoMasUsado\r\n",
+							"try:\r\n",
+							"\r\n",
+							"    tablaHoroscopoMasUsado.write \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .mode(\"overwrite\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"HoroscopoMasUsado\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password) \\\r\n",
+							"        .save()\r\n",
+							"\r\n",
+							"except ValueError as error :\r\n",
+							"\r\n",
+							"    print(\"MSSQL Connector write failed\", error)\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"print(\"MSSQL Connector write(overwrite) succeeded  \")"
+						],
+						"outputs": [],
+						"execution_count": 16
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"\"\"\"\r\n",
+							"select top(1) count(*) as reproducciones, uc.nombreArtista, uh.signo\r\n",
+							"from dbo.UsuariosHoroscopos uh inner join dbo.Usuarios u on u.id = uh.idUsuario \r\n",
+							"    inner join dbo.UsuariosCanciones uc on u.id = uc.id\r\n",
+							"WHERE uh.signo = (select signo from dbo.HoroscopoMasUsado)\r\n",
+							"group by  uc.nombreArtista, uh.signo\r\n",
+							"order by reproducciones desc\r\n",
+							"--limit 1 en payspark en vez de top\r\n",
+							"\r\n",
+							"\"\"\"\r\n",
+							"tablaUsuarios = spark.read \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"Usuarios\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password).load()\r\n",
+							"\r\n",
+							"tablaUsuariosHoroscopos = spark.read \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"UsuariosHoroscopos\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password).load()\r\n",
+							"\r\n",
+							"tablaUsuariosCanciones = spark.read \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"UsuariosCanciones\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password).load()\r\n",
+							"\r\n",
+							"tablaHoroscopoMasUsado = spark.read \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"HoroscopoMasUsado\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password).load()\r\n",
+							"\r\n",
+							"\r\n",
+							"tablaUsuarios.createOrReplaceTempView(\"Usuarios\")\r\n",
+							"tablaUsuariosHoroscopos.createOrReplaceTempView(\"UsuariosHoroscopos\")\r\n",
+							"tablaUsuariosCanciones.createOrReplaceTempView(\"UsuariosCanciones\")\r\n",
+							"tablaHoroscopoMasUsado.createOrReplaceTempView(\"HoroscopoMasUsado\")\r\n",
+							"\r\n",
+							"tablaArtistaMasEscuchado = spark.sql(\"select count(*) as reproducciones, uc.nombreArtista, uh.signo from UsuariosHoroscopos uh inner join Usuarios u on u.id = uh.idUsuario inner join UsuariosCanciones uc on u.id = uc.id WHERE uh.signo = (select signo from HoroscopoMasUsado) group by  uc.nombreArtista, uh.signo order by reproducciones desc limit 1\")\r\n",
+							"\r\n",
+							"tablaArtistaMasEscuchado.show()\r\n",
+							"\r\n",
+							"\r\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 20
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"#crear tabla ArtistaMasEscuchado\r\n",
+							"try:\r\n",
+							"\r\n",
+							"    tablaArtistaMasEscuchado.write \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .mode(\"overwrite\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"ArtistaMasEscuchado\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password) \\\r\n",
+							"        .save()\r\n",
+							"\r\n",
+							"except ValueError as error :\r\n",
+							"\r\n",
+							"    print(\"MSSQL Connector write failed\", error)\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							"print(\"MSSQL Connector write(overwrite) succeeded  \")"
+						],
+						"outputs": [],
+						"execution_count": 21
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"\"\"\"\r\n",
+							"--\t¿En qué continente deberían publicitar más la aplicación?  \r\n",
+							"-- reproducciones por pais y continente\r\n",
+							"select count(*) as reproducciones, p.nombre, p.Continente\r\n",
+							"from dbo.paises p inner join dbo.Usuarios u on p.nombre = u.pais inner join dbo.UsuariosCanciones uc on u.id = uc.id \r\n",
+							"group by  p.nombre, p.Continente\r\n",
+							"order by reproducciones desc\r\n",
+							"\"\"\"\r\n",
+							"tablaUsuarios = spark.read \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"Usuarios\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password).load()\r\n",
+							"\r\n",
+							"tablaPaises = spark.read \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"paises\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password).load()\r\n",
+							"\r\n",
+							"tablaUsuariosCanciones = spark.read \\\r\n",
+							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .option(\"url\", url) \\\r\n",
+							"        .option(\"dbtable\", \"UsuariosCanciones\") \\\r\n",
+							"        .option(\"user\", user) \\\r\n",
+							"        .option(\"password\", password).load()\r\n",
+							"\r\n",
+							"tablaUsuarios.createOrReplaceTempView(\"Usuarios\")\r\n",
+							"tablaUsuariosCanciones.createOrReplaceTempView(\"UsuariosCanciones\")\r\n",
+							"tablaPaises.createOrReplaceTempView(\"paises\")\r\n",
+							"\r\n",
+							"tablaReproPaisContinente = spark.sql(\"select count(*) as reproducciones, p.nombre, p.Continente from paises p inner join Usuarios u on p.nombre = u.pais inner join UsuariosCanciones uc on u.id = uc.id group by  p.nombre, p.Continente order by reproducciones asc\")\r\n",
+							"\r\n",
+							"tablaReproPaisContinente.show()\r\n",
+							"\r\n",
+							"\"\"\"\r\n",
+							"-- reproducciones por continente\r\n",
+							"select count(*) as reproducciones, p.Continente\r\n",
+							"from dbo.paises p inner join dbo.Usuarios u on p.nombre = u.pais inner join dbo.UsuariosCanciones uc on u.id = uc.id \r\n",
+							"group by  p.Continente\r\n",
+							"order by reproducciones asc\r\n",
+							"\"\"\"\r\n",
+							"\r\n",
+							"tablaReproContinente = spark.sql(\"select count(*) as reproducciones, p.Continente from paises p inner join Usuarios u on p.nombre = u.pais inner join UsuariosCanciones uc on u.id = uc.id group by  p.Continente order by reproducciones asc\")\r\n",
+							"\r\n",
+							"tablaReproContinente.show()\r\n",
+							"\r\n",
+							"\"\"\"\r\n",
+							"--¿Hay algún continente que falte? \r\n",
+							"-- falta el continente de British Indian Ocean Territory y el de Antarctica\r\n",
+							"\r\n",
+							"select count(*) as reproducciones, p.nombre, p.Continente\r\n",
+							"from dbo.paises p inner join dbo.Usuarios u on p.nombre = u.pais inner join dbo.UsuariosCanciones uc on u.id = uc.id \r\n",
+							"where p.Continente is null\r\n",
+							"group by  p.nombre, p.Continente\r\n",
+							"order by reproducciones asc\r\n",
+							"\"\"\"\r\n",
+							"\r\n",
+							"tablaContinentesNull = spark.sql(\"select count(*) as reproducciones, p.nombre, p.Continente from paises p inner join Usuarios u on p.nombre = u.pais inner join UsuariosCanciones uc on u.id = uc.id where p.Continente is null group by p.nombre, p.Continente order by reproducciones asc\")\r\n",
+							"\r\n",
+							"tablaContinentesNull.show()\r\n",
+							"\r\n",
+							"\r\n",
+							"\r\n",
+							""
 						],
 						"outputs": [],
 						"execution_count": 7
@@ -1720,86 +2213,48 @@
 							}
 						},
 						"source": [
-							"from datetime import datetime\r\n",
-							"from pyspark.sql.types import StructType,StructField, StringType, IntegerType\r\n",
-							"import pyspark.sql.functions as F\r\n",
-							"import org.apache.spark.sql.functions.col\r\n",
+							"#crear tabla ReproPaisContinente\r\n",
+							"#crear tabla ReproContinente\r\n",
+							"#crear tabla ContinentesNull\r\n",
+							"try:\r\n",
 							"\r\n",
-							"servername = \"jdbc:sqlserver://practicabigdata.database.windows.net:1433\"\r\n",
-							"dbname = \"Practica\"\r\n",
-							"url = servername + \";\" + \"databaseName=\" + dbname + \";\"\r\n",
-							"user = \"practicabigdata\" \r\n",
-							"password = \"BigData123\"\r\n",
-							"\r\n",
-							"\r\n",
-							"tablaUsuarios = spark.read \\\r\n",
+							"    tablaReproPaisContinente.write \\\r\n",
 							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .mode(\"overwrite\") \\\r\n",
 							"        .option(\"url\", url) \\\r\n",
-							"        .option(\"dbtable\", \"Usuarios\") \\\r\n",
+							"        .option(\"dbtable\", \"ReproPaisContinente\") \\\r\n",
 							"        .option(\"user\", user) \\\r\n",
-							"        .option(\"password\", password).load()\r\n",
-							"\r\n",
-							"tablaHoroscopos = spark.read \\\r\n",
+							"        .option(\"password\", password) \\\r\n",
+							"        .save()\r\n",
+							"    \r\n",
+							"    tablaReproContinente.write \\\r\n",
 							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .mode(\"overwrite\") \\\r\n",
 							"        .option(\"url\", url) \\\r\n",
-							"        .option(\"dbtable\", \"horoscopos\") \\\r\n",
+							"        .option(\"dbtable\", \"ReproContinente\") \\\r\n",
 							"        .option(\"user\", user) \\\r\n",
-							"        .option(\"password\", password).load()\r\n",
-							"\r\n",
-							"tablaPaises = spark.read \\\r\n",
+							"        .option(\"password\", password) \\\r\n",
+							"        .save()\r\n",
+							"    \r\n",
+							"    tablaContinentesNull.write \\\r\n",
 							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
+							"        .mode(\"overwrite\") \\\r\n",
 							"        .option(\"url\", url) \\\r\n",
-							"        .option(\"dbtable\", \"paises\") \\\r\n",
+							"        .option(\"dbtable\", \"ContinentesNull\") \\\r\n",
 							"        .option(\"user\", user) \\\r\n",
-							"        .option(\"password\", password).load()\r\n",
+							"        .option(\"password\", password) \\\r\n",
+							"        .save()\r\n",
 							"\r\n",
-							"tablaHoroscopos = tablaHoroscopos.withColumn(\"Desde\", split(tablaHoroscopos['Fecha_rango'], \" - \").getItem(0)).withColumn(\"Hasta\", split(tablaHoroscopos['Fecha_rango'], \" - \").getItem(1))\r\n",
-							"emptyRDD = spark.sparkContext.emptyRDD()\r\n",
+							"except ValueError as error :\r\n",
 							"\r\n",
-							"schema = StructType([\r\n",
-							"    StructField(\"idArtista\", StringType(), True),\r\n",
-							"    StructField(\"idHoroscopo\", StringType(), True),\r\n",
-							"    StructField(\"numEscuchas\", StringType(), True)])\r\n",
+							"    print(\"MSSQL Connector write failed\", error)\r\n",
 							"\r\n",
-							"ArtistaHoroscopo = spark.createDataFrame(emptyRDD, schema)\r\n",
 							"\r\n",
-							"tablaUsuariosCanciones = spark.read \\\r\n",
-							"        .format(\"com.microsoft.sqlserver.jdbc.spark\") \\\r\n",
-							"        .option(\"url\", url) \\\r\n",
-							"        .option(\"dbtable\", \"UsuariosCanciones\") \\\r\n",
-							"        .option(\"user\", user) \\\r\n",
-							"        .option(\"password\", password).load()\r\n",
 							"\r\n",
-							"tablaUsuarios.show()\r\n",
-							"tablaHoroscopos.show()\r\n",
-							"tablaPaises.show()\r\n",
-							"tablaUsuariosCanciones.show()\r\n",
-							"\r\n",
-							"tablaUsuariosCanciones = tablaUsuariosCanciones.join(tablaHoroscopos,tablaUsuariosCanciones.id == tablaHoroscopos.idUsuario,\"inner\")\r\n",
-							"tablaUsuariosCanciones.show(truncate=False)\r\n",
-							""
+							"print(\"MSSQL Connector write(overwrite) succeeded  \")"
 						],
 						"outputs": [],
-						"execution_count": 3
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							""
-						],
-						"outputs": [],
-						"execution_count": null
+						"execution_count": 8
 					}
 				]
 			},
