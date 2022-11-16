@@ -17,7 +17,7 @@
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
 				"spark.dynamicAllocation.maxExecutors": "2",
-				"spark.autotune.trackingId": "446c68d3-4f61-41ef-af94-450704c3cb41"
+				"spark.autotune.trackingId": "311f5bb6-869c-4feb-8c51-c23e717f5065"
 			}
 		},
 		"metadata": {
@@ -57,9 +57,24 @@
 					"\r\n",
 					"#from pyspark.sql.functions import col\r\n",
 					"import pyspark.sql.functions as F\r\n",
-					"\r\n",
-					"\r\n",
-					"\r\n",
+					""
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
 					"\r\n",
 					"\r\n",
 					"\r\n",
@@ -126,7 +141,7 @@
 					"\r\n",
 					"tablaUsuarios.show()"
 				],
-				"execution_count": 1
+				"execution_count": null
 			},
 			{
 				"cell_type": "code",
@@ -281,6 +296,31 @@
 					"print(\"MSSQL Connector write(overwrite) succeeded  \")"
 				],
 				"execution_count": 9
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"\"\"\" --cuál es el signo que tiene más usuarios a nivel mundial \r\n",
+					"select top(1) count(*) as users, uh.signo\r\n",
+					"from    dbo.UsuariosHoroscopos uh inner join dbo.Usuarios u on u.id = uh.idUsuario        \r\n",
+					"group by  uh.signo\r\n",
+					"order by users desc\r\n",
+					"\"\"\"\r\n",
+					"\r\n",
+					""
+				],
+				"execution_count": null
 			}
 		]
 	}
